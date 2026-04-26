@@ -11,6 +11,10 @@ dependencies = [
     "numpy>=1.26",
     "python-multipart>=0.0.20",
     "pydantic>=2.9",
+    "transformers>=4.45",
+    "torch>=2.4",
+    "torchaudio>=2.4",
+    "phonemizer>=3.3",
 ]
 
 [project.optional-dependencies]
@@ -33,3 +37,6 @@ target-version = "py311"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "slow: tests that download large models or take significant time (deselect with '-m \"not slow\"')",
+]

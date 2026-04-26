@@ -12,10 +12,18 @@ Built to power [linguamatch](https://github.com/1shristi/linguamatch) and simila
 
 ## Local development
 
-Requires Python 3.11+ and `ffmpeg` (for decoding webm audio):
+Requires Python 3.11+, `ffmpeg` (decoding webm audio), and `espeak-ng` (used by phonemizer for phoneme detection):
 
 ```sh
-brew install ffmpeg   # macOS
+brew install ffmpeg espeak-ng   # macOS
+# or on Debian/Ubuntu:
+# apt-get install ffmpeg espeak-ng
+```
+
+On macOS you may need to point phonemizer at the espeak library:
+
+```sh
+export PHONEMIZER_ESPEAK_LIBRARY=/opt/homebrew/lib/libespeak-ng.dylib
 ```
 
 ```sh
@@ -33,12 +41,51 @@ Service runs on `http://localhost:8000`. API docs at `/docs`.
 |---|---|---|
 | GET | `/health` | Liveness check |
 | GET | `/` | Service info |
-| POST | `/analyze` | Extract phonetic features from audio (501 until phase 2) |
+| POST | `/analyze` | Extract phonetic features from audio |
+
+### `/analyze` returns
+
+```json
+{
+  "duration_s": 1.23,
+  "f0": {
+    "mean_hz": 198.4,
+    "min_hz": 84.0,
+    "max_hz": 312.5,
+    "std_hz": 42.1,
+    "voiced_fraction": 0.71
+  },
+  "formants": {
+    "f1_mean_hz": 530.0,
+    "f2_mean_hz": 1620.0,
+    "f3_mean_hz": 2480.0
+  },
+  "syllable_rate_hz": 4.2,
+  "vot_ms": null,
+  "phonemes": {
+    "counts": {"i": 4, "θ": 2, "ɹ": 7, "...": "..."},
+    "total_tokens": 38
+  },
+  "notes": []
+}
+```
+
+### Disabling phoneme detection
+
+Set `VOICEPRINT_DISABLE_PHONEMES=1` to skip the Wav2Vec2 phoneme model. Useful for fast/CI test runs or when only acoustic features are needed.
 
 ## Running tests
 
+Fast tests (no model downloads):
+
 ```sh
-pytest
+pytest -m "not slow"
+```
+
+Full suite including phoneme model integration (downloads ~370 MB on first run):
+
+```sh
+PHONEMIZER_ESPEAK_LIBRARY=/opt/homebrew/lib/libespeak-ng.dylib pytest
 ```
 
 ## Docker

@@ -35,12 +35,18 @@ class FormantsBlock(BaseModel):
     f3_mean_hz: float | None = None
 
 
+class PhonemesBlock(BaseModel):
+    counts: dict[str, int] = Field(default_factory=dict)
+    total_tokens: int = 0
+
+
 class AnalyzeResponse(BaseModel):
     duration_s: float
     f0: F0Block
     formants: FormantsBlock
     syllable_rate_hz: float | None = None
     vot_ms: float | None = None
+    phonemes: PhonemesBlock = Field(default_factory=PhonemesBlock)
     notes: list[str] = Field(default_factory=list)
 
 
@@ -79,5 +85,9 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         ),
         syllable_rate_hz=features.syllable_rate_hz,
         vot_ms=features.vot_ms,
+        phonemes=PhonemesBlock(
+            counts=features.phoneme_counts,
+            total_tokens=features.phoneme_total_tokens,
+        ),
         notes=features.notes,
     )

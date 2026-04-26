@@ -45,6 +45,8 @@ class FeatureSet:
     formants: FormantResult
     syllable_rate_hz: float | None
     vot_ms: float | None
+    phoneme_counts: dict[str, int]
+    phoneme_total_tokens: int
     notes: list[str]
 
 
@@ -239,7 +241,7 @@ def estimate_vot(_sound: parselmouth.Sound) -> float | None:
 # ─── Top-level extraction ────────────────────────────────────────────────────
 
 
-def extract_all(audio_b64: str, fmt: str) -> FeatureSet:
+def extract_all(audio_b64: str, fmt: str, *, include_phonemes: bool = True) -> FeatureSet:
     sound = decode_audio(audio_b64, fmt)
     notes: list[str] = []
 
@@ -255,11 +257,25 @@ def extract_all(audio_b64: str, fmt: str) -> FeatureSet:
     syllable_rate = estimate_syllable_rate(sound)
     vot = estimate_vot(sound)
 
+    phoneme_counts: dict[str, int] = {}
+    phoneme_total = 0
+    if include_phonemes:
+        try:
+            from app.services import phonemes
+
+            inv = phonemes.extract_phonemes(sound)
+            phoneme_counts = inv.counts
+            phoneme_total = inv.total_tokens
+        except Exception as e:  # noqa: BLE001 — phoneme failures are non-fatal
+            notes.append(f"phoneme detection unavailable: {type(e).__name__}")
+
     return FeatureSet(
         duration_s=float(duration),
         f0=f0,
         formants=formants,
         syllable_rate_hz=syllable_rate,
         vot_ms=vot,
+        phoneme_counts=phoneme_counts,
+        phoneme_total_tokens=phoneme_total,
         notes=notes,
     )
