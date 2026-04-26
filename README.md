@@ -12,7 +12,11 @@ Built to power [linguamatch](https://github.com/1shristi/linguamatch) and simila
 
 ## Local development
 
-Requires Python 3.11+.
+Requires Python 3.11+ and `ffmpeg` (for decoding webm audio):
+
+```sh
+brew install ffmpeg   # macOS
+```
 
 ```sh
 python3 -m venv .venv
