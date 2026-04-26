@@ -57,10 +57,19 @@ _model_load_error: str | None = None
 
 
 @dataclass
+class PhonemeOccurrence:
+    """A single occurrence of a phoneme with timing in the audio."""
+    phoneme: str
+    start_s: float
+    end_s: float
+
+
+@dataclass
 class PhonemeInventory:
-    """Per-phoneme count of how often the model emitted that token over the clip."""
+    """Per-phoneme count plus chronological occurrences of each emitted token."""
     counts: dict[str, int]
     total_tokens: int
+    occurrences: list[PhonemeOccurrence]
 
     def status(self, phoneme: str, *, present_threshold: int = 2) -> str:
         """Classify a single phoneme as 'present' / 'approximate' / 'absent'."""
@@ -108,10 +117,53 @@ def _resample_if_needed(sound: parselmouth.Sound, target_sr: int = _TARGET_SR) -
     return samples
 
 
+def _decode_with_timing(
+    pred_ids,  # 1-D tensor (T,)
+    processor,
+    *,
+    audio_duration_s: float,
+    blank_id: int,
+) -> list[PhonemeOccurrence]:
+    """Collapse CTC output into phoneme occurrences with start/end times."""
+    ids = pred_ids.tolist()
+    num_frames = len(ids)
+    if num_frames == 0 or audio_duration_s <= 0:
+        return []
+    frame_duration_s = audio_duration_s / num_frames
+
+    occurrences: list[PhonemeOccurrence] = []
+    prev_id = -1
+    run_start_frame = 0
+
+    def flush(token_id: int, start_frame: int, end_frame: int) -> None:
+        if token_id == blank_id or token_id < 0:
+            return
+        token = processor.tokenizer.convert_ids_to_tokens(int(token_id))
+        if not token or token in _NON_PHONEME_TOKENS:
+            return
+        occurrences.append(
+            PhonemeOccurrence(
+                phoneme=token,
+                start_s=start_frame * frame_duration_s,
+                end_s=end_frame * frame_duration_s,
+            )
+        )
+
+    for i, token_id in enumerate(ids):
+        if token_id != prev_id:
+            if prev_id != -1:
+                flush(prev_id, run_start_frame, i)
+            run_start_frame = i
+            prev_id = token_id
+
+    flush(prev_id, run_start_frame, num_frames)
+    return occurrences
+
+
 def extract_phonemes(sound: parselmouth.Sound) -> PhonemeInventory:
-    """Run the audio through Wav2Vec2-Phoneme and tally phoneme counts."""
+    """Run the audio through Wav2Vec2-Phoneme and tally phoneme counts + timed occurrences."""
     if os.getenv("VOICEPRINT_DISABLE_PHONEMES") == "1":
-        return PhonemeInventory(counts={}, total_tokens=0)
+        return PhonemeInventory(counts={}, total_tokens=0, occurrences=[])
 
     _ensure_model_loaded()
     assert _model is not None and _processor is not None  # for type checker
@@ -119,16 +171,28 @@ def extract_phonemes(sound: parselmouth.Sound) -> PhonemeInventory:
     import torch
 
     samples = _resample_if_needed(sound, _TARGET_SR)
+    audio_duration_s = float(len(samples) / _TARGET_SR)
     inputs = _processor(samples, sampling_rate=_TARGET_SR, return_tensors="pt")
 
     with torch.no_grad():
         logits = _model(**inputs).logits
 
-    pred_ids = torch.argmax(logits, dim=-1)
-    transcription = _processor.batch_decode(pred_ids)[0]
+    pred_ids = torch.argmax(logits, dim=-1)[0]  # (T,)
 
-    # The processor returns a space-separated phoneme string. Split and tally.
-    tokens = [t for t in transcription.split() if t and t not in _NON_PHONEME_TOKENS]
-    counts = Counter(tokens)
+    blank_id = _processor.tokenizer.pad_token_id
+    if blank_id is None:
+        blank_id = 0
 
-    return PhonemeInventory(counts=dict(counts), total_tokens=len(tokens))
+    occurrences = _decode_with_timing(
+        pred_ids,
+        _processor,
+        audio_duration_s=audio_duration_s,
+        blank_id=int(blank_id),
+    )
+
+    counts = Counter(occ.phoneme for occ in occurrences)
+    return PhonemeInventory(
+        counts=dict(counts),
+        total_tokens=len(occurrences),
+        occurrences=occurrences,
+    )

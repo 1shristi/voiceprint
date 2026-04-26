@@ -159,4 +159,5 @@ def test_extract_all_on_synthetic_wav() -> None:
     assert features.duration_s == pytest.approx(1.0, abs=0.01)
     assert features.f0.mean_hz is not None
     assert features.f0.mean_hz == pytest.approx(180.0, abs=10.0)
-    assert features.vot_ms is None  # phase 2c
+    # No phonemes are detected on a sine wave, so VOT measurements stay empty.
+    assert features.vot_measurements == []

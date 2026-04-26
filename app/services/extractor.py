@@ -39,12 +39,23 @@ class FormantResult:
 
 
 @dataclass
+class VotMeasurementOut:
+    phoneme: str
+    time_s: float
+    vot_ms: float
+    aspiration_class: str
+
+
+@dataclass
 class FeatureSet:
     duration_s: float
     f0: F0Result
     formants: FormantResult
     syllable_rate_hz: float | None
-    vot_ms: float | None
+    vot_aspirated_voiceless_mean_ms: float | None
+    vot_plain_voiceless_mean_ms: float | None
+    vot_voiced_mean_ms: float | None
+    vot_measurements: list[VotMeasurementOut]
     phoneme_counts: dict[str, int]
     phoneme_total_tokens: int
     notes: list[str]
@@ -227,17 +238,6 @@ def estimate_syllable_rate(sound: parselmouth.Sound, *, min_dip_db: float = 2.0)
     return float(len(accepted) / duration)
 
 
-# ─── VOT — placeholder ───────────────────────────────────────────────────────
-
-
-def estimate_vot(_sound: parselmouth.Sound) -> float | None:
-    """
-    Voice Onset Time — true VOT requires per-stop segmentation, which needs
-    forced alignment or a phoneme model. Returning None until phase 2c.
-    """
-    return None
-
-
 # ─── Top-level extraction ────────────────────────────────────────────────────
 
 
@@ -255,10 +255,10 @@ def extract_all(audio_b64: str, fmt: str, *, include_phonemes: bool = True) -> F
 
     formants = extract_formants(sound)
     syllable_rate = estimate_syllable_rate(sound)
-    vot = estimate_vot(sound)
 
     phoneme_counts: dict[str, int] = {}
     phoneme_total = 0
+    phoneme_occurrences: list = []
     if include_phonemes:
         try:
             from app.services import phonemes
@@ -266,15 +266,44 @@ def extract_all(audio_b64: str, fmt: str, *, include_phonemes: bool = True) -> F
             inv = phonemes.extract_phonemes(sound)
             phoneme_counts = inv.counts
             phoneme_total = inv.total_tokens
+            phoneme_occurrences = inv.occurrences
         except Exception as e:  # noqa: BLE001 — phoneme failures are non-fatal
             notes.append(f"phoneme detection unavailable: {type(e).__name__}")
+
+    # VOT depends on phoneme timing — only meaningful when occurrences are available.
+    vot_aspirated_mean: float | None = None
+    vot_plain_mean: float | None = None
+    vot_voiced_mean: float | None = None
+    vot_measurements_out: list[VotMeasurementOut] = []
+    if phoneme_occurrences:
+        try:
+            from app.services import vot as vot_service
+
+            summary = vot_service.estimate_vot(sound, phoneme_occurrences)
+            vot_aspirated_mean = summary.aspirated_voiceless_mean_ms
+            vot_plain_mean = summary.plain_voiceless_mean_ms
+            vot_voiced_mean = summary.voiced_mean_ms
+            vot_measurements_out = [
+                VotMeasurementOut(
+                    phoneme=m.phoneme,
+                    time_s=m.time_s,
+                    vot_ms=m.vot_ms,
+                    aspiration_class=m.aspiration_class,
+                )
+                for m in summary.measurements
+            ]
+        except Exception as e:  # noqa: BLE001 — VOT failures are non-fatal
+            notes.append(f"VOT estimation unavailable: {type(e).__name__}")
 
     return FeatureSet(
         duration_s=float(duration),
         f0=f0,
         formants=formants,
         syllable_rate_hz=syllable_rate,
-        vot_ms=vot,
+        vot_aspirated_voiceless_mean_ms=vot_aspirated_mean,
+        vot_plain_voiceless_mean_ms=vot_plain_mean,
+        vot_voiced_mean_ms=vot_voiced_mean,
+        vot_measurements=vot_measurements_out,
         phoneme_counts=phoneme_counts,
         phoneme_total_tokens=phoneme_total,
         notes=notes,

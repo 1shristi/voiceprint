@@ -44,7 +44,8 @@ def test_analyze_returns_features_for_synthetic_audio() -> None:
     assert 215 <= body["f0"]["mean_hz"] <= 225
 
     assert "formants" in body
-    assert body["vot_ms"] is None  # phase 2c
+    assert "vot" in body
+    assert isinstance(body["vot"]["measurements"], list)
     assert isinstance(body["notes"], list)
 
 

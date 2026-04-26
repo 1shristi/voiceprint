@@ -40,12 +40,26 @@ class PhonemesBlock(BaseModel):
     total_tokens: int = 0
 
 
+class VotMeasurementBlock(BaseModel):
+    phoneme: str
+    time_s: float
+    vot_ms: float
+    aspiration_class: str
+
+
+class VotBlock(BaseModel):
+    aspirated_voiceless_mean_ms: float | None = None
+    plain_voiceless_mean_ms: float | None = None
+    voiced_mean_ms: float | None = None
+    measurements: list[VotMeasurementBlock] = Field(default_factory=list)
+
+
 class AnalyzeResponse(BaseModel):
     duration_s: float
     f0: F0Block
     formants: FormantsBlock
     syllable_rate_hz: float | None = None
-    vot_ms: float | None = None
+    vot: VotBlock = Field(default_factory=VotBlock)
     phonemes: PhonemesBlock = Field(default_factory=PhonemesBlock)
     notes: list[str] = Field(default_factory=list)
 
@@ -84,7 +98,20 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             f3_mean_hz=features.formants.f3_mean_hz,
         ),
         syllable_rate_hz=features.syllable_rate_hz,
-        vot_ms=features.vot_ms,
+        vot=VotBlock(
+            aspirated_voiceless_mean_ms=features.vot_aspirated_voiceless_mean_ms,
+            plain_voiceless_mean_ms=features.vot_plain_voiceless_mean_ms,
+            voiced_mean_ms=features.vot_voiced_mean_ms,
+            measurements=[
+                VotMeasurementBlock(
+                    phoneme=m.phoneme,
+                    time_s=m.time_s,
+                    vot_ms=m.vot_ms,
+                    aspiration_class=m.aspiration_class,
+                )
+                for m in features.vot_measurements
+            ],
+        ),
         phonemes=PhonemesBlock(
             counts=features.phoneme_counts,
             total_tokens=features.phoneme_total_tokens,

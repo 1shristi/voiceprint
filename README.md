@@ -61,7 +61,14 @@ Service runs on `http://localhost:8000`. API docs at `/docs`.
     "f3_mean_hz": 2480.0
   },
   "syllable_rate_hz": 4.2,
-  "vot_ms": null,
+  "vot": {
+    "aspirated_voiceless_mean_ms": 78.5,
+    "plain_voiceless_mean_ms": 18.0,
+    "voiced_mean_ms": null,
+    "measurements": [
+      {"phoneme": "pʰ", "time_s": 0.45, "vot_ms": 80.0, "aspiration_class": "aspirated_voiceless"}
+    ]
+  },
   "phonemes": {
     "counts": {"i": 4, "θ": 2, "ɹ": 7, "...": "..."},
     "total_tokens": 38
