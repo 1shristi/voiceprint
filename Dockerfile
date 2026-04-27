@@ -20,6 +20,14 @@ COPY pyproject.toml ./
 RUN pip install --upgrade pip \
     && pip install .
 
+# Pre-download the Wav2Vec2-Phoneme model so cold-start requests don't have
+# to fetch ~370 MB. Cached under the standard HF hub directory.
+ENV HF_HOME=/app/.cache/huggingface
+RUN python -c "from transformers import AutoModelForCTC, AutoProcessor; \
+    name='facebook/wav2vec2-lv-60-espeak-cv-ft'; \
+    AutoProcessor.from_pretrained(name); \
+    AutoModelForCTC.from_pretrained(name)"
+
 COPY app ./app
 
 EXPOSE 8000
