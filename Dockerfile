@@ -17,8 +17,14 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml ./
-RUN pip install --upgrade pip \
-    && pip install .
+RUN pip install --upgrade pip
+# Install CPU-only torch first to avoid pulling ~1.5 GB of CUDA libraries we
+# don't use. Must come before the regular `pip install .` so torchaudio's
+# version resolution sees the CPU torch already in place.
+RUN pip install --no-cache-dir \
+    --index-url https://download.pytorch.org/whl/cpu \
+    torch torchaudio
+RUN pip install --no-cache-dir .
 
 # Pre-download the Wav2Vec2-Phoneme model so cold-start requests don't have
 # to fetch ~370 MB. Cached under the standard HF hub directory.
