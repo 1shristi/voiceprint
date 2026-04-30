@@ -109,6 +109,8 @@ def test_f0_silent_clip_returns_none() -> None:
     silence = parselmouth.Sound(np.zeros(SAMPLE_RATE), sampling_frequency=SAMPLE_RATE)
     result = extractor.extract_f0(silence)
     assert result.mean_hz is None
+    assert result.std_semitones is None
+    assert result.range_semitones_p10_p90 is None
     assert result.voiced_fraction < 0.05
 
 
@@ -117,6 +119,39 @@ def test_f0_higher_pitch_recovers_higher_frequency() -> None:
     result = extractor.extract_f0(sound)
     assert result.mean_hz is not None
     assert result.mean_hz == pytest.approx(320.0, abs=10.0)
+
+
+def test_f0_pure_tone_has_low_semitone_spread() -> None:
+    """A steady sine has near-zero ST std and near-zero p10-p90 range."""
+    sound = _make_sine(200.0, duration_s=1.0)
+    result = extractor.extract_f0(sound)
+    assert result.std_semitones is not None
+    assert result.range_semitones_p10_p90 is not None
+    assert result.std_semitones < 0.5
+    assert result.range_semitones_p10_p90 < 1.0
+
+
+def test_f0_swept_tone_has_higher_semitone_spread_than_pure() -> None:
+    """A pitch sweep (180 → 240 Hz, ~5 ST) should yield meaningfully larger ST std."""
+    duration = 1.0
+    n = int(SAMPLE_RATE * duration)
+    t = np.linspace(0, duration, n, endpoint=False)
+    f_inst = np.linspace(180.0, 240.0, n)
+    phase = 2 * np.pi * np.cumsum(f_inst) / SAMPLE_RATE
+    samples = 0.5 * np.sin(phase)
+    swept = parselmouth.Sound(samples, sampling_frequency=SAMPLE_RATE)
+
+    pure = _make_sine(210.0, duration_s=duration)
+
+    swept_result = extractor.extract_f0(swept)
+    pure_result = extractor.extract_f0(pure)
+
+    assert swept_result.std_semitones is not None
+    assert pure_result.std_semitones is not None
+    assert swept_result.std_semitones > pure_result.std_semitones + 0.5
+    # p10-p90 range on the sweep should also be substantial (180→240 Hz ≈ 5 ST)
+    assert swept_result.range_semitones_p10_p90 is not None
+    assert swept_result.range_semitones_p10_p90 > 2.0
 
 
 # ─── Formants ────────────────────────────────────────────────────────────────
