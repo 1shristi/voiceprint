@@ -26,6 +26,8 @@ class F0Block(BaseModel):
     min_hz: float | None = None
     max_hz: float | None = None
     std_hz: float | None = None
+    std_semitones: float | None = None
+    range_semitones_p10_p90: float | None = None
     voiced_fraction: float = 0.0
 
 
@@ -90,6 +92,8 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             min_hz=features.f0.min_hz,
             max_hz=features.f0.max_hz,
             std_hz=features.f0.std_hz,
+            std_semitones=features.f0.std_semitones,
+            range_semitones_p10_p90=features.f0.range_semitones_p10_p90,
             voiced_fraction=features.f0.voiced_fraction,
         ),
         formants=FormantsBlock(

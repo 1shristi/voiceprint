@@ -28,6 +28,11 @@ class F0Result:
     min_hz: float | None
     max_hz: float | None
     std_hz: float | None
+    # Semitone metrics: anatomy-invariant (log scale), useful for cross-speaker
+    # classification. Reference is arbitrary for std/range — both are translation
+    # invariant under log shift.
+    std_semitones: float | None
+    range_semitones_p10_p90: float | None
     voiced_fraction: float
 
 
@@ -146,16 +151,27 @@ def extract_f0(sound: parselmouth.Sound, *, pitch_floor: float = 75.0, pitch_cei
             min_hz=None,
             max_hz=None,
             std_hz=None,
+            std_semitones=None,
+            range_semitones_p10_p90=None,
             voiced_fraction=voiced_fraction,
         )
 
+    voiced_st = 12.0 * np.log2(voiced / 100.0)
+    p10, p90 = np.percentile(voiced_st, [10, 90])
+
     return F0Result(
-        mean_hz=float(np.mean(voiced)),
-        min_hz=float(np.min(voiced)),
-        max_hz=float(np.max(voiced)),
-        std_hz=float(np.std(voiced)),
+        mean_hz=_finite_or_none(float(np.mean(voiced))),
+        min_hz=_finite_or_none(float(np.min(voiced))),
+        max_hz=_finite_or_none(float(np.max(voiced))),
+        std_hz=_finite_or_none(float(np.std(voiced))),
+        std_semitones=_finite_or_none(float(np.std(voiced_st))),
+        range_semitones_p10_p90=_finite_or_none(float(p90 - p10)),
         voiced_fraction=voiced_fraction,
     )
+
+
+def _finite_or_none(x: float) -> float | None:
+    return float(x) if np.isfinite(x) else None
 
 
 # ─── Formants ────────────────────────────────────────────────────────────────
