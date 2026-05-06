@@ -1,29 +1,32 @@
-# fly.toml — Fly.io deployment config for voiceprint
-# Reference: https://fly.io/docs/reference/configuration/
+# fly.toml app configuration file generated for voiceprint on 2026-04-26T20:11:11-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "voiceprint"
-primary_region = "ord"  # Chicago — change if your audience is closer to elsewhere
+app = 'voiceprint'
+primary_region = 'ord'
 
 [build]
 
 [env]
-  PORT = "8000"
+  PORT = '8000'
 
 [http_service]
   internal_port = 8000
   force_https = true
-  auto_stop_machines = "suspend"   # save money: pause when idle (scale to zero)
-  auto_start_machines = true        # auto-resume on next request
-  min_machines_running = 0
-  processes = ["app"]
+  auto_stop_machines = 'suspend'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
 
   [http_service.concurrency]
-    type = "requests"
+    type = 'requests'
     hard_limit = 5
     soft_limit = 2
 
 [[vm]]
-  size = "shared-cpu-1x"
-  memory = "2gb"          # torch + Wav2Vec2 model + audio processing needs ~1.5 GB headroom
-  cpu_kind = "shared"
+  size = 'shared-cpu-1x'
+  memory = '2gb'
+  cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 2048
