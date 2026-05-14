@@ -65,11 +65,43 @@ class PhonemeOccurrence:
 
 
 @dataclass
+class PhoneProbe:
+    """A target phoneme the speaker was asked to produce in the stretch clip.
+
+    `accept` and `approximate` are tuples of eSpeak/IPA token forms the Wav2Vec2
+    model might emit — multiple variants are listed because the model's exact
+    token shape (combining marks, length, modifier letters) varies per phoneme.
+    """
+    label: str             # snake_case identifier for downstream UI / prompt
+    ipa: str               # canonical IPA glyph for display
+    expected_count: int    # canonical occurrences in the stretch sentence
+    accept: tuple[str, ...]
+    approximate: tuple[str, ...]
+
+
+@dataclass
+class StretchProbeResult:
+    label: str
+    ipa: str
+    expected_count: int
+    count: int             # accepted-token total
+    approximate_count: int
+    status: str            # "hit" | "approximate" | "missed"
+
+
+@dataclass
+class StretchScore:
+    expected_language: str
+    probes: list[StretchProbeResult]
+
+
+@dataclass
 class PhonemeInventory:
     """Per-phoneme count plus chronological occurrences of each emitted token."""
     counts: dict[str, int]
     total_tokens: int
     occurrences: list[PhonemeOccurrence]
+    stretch_score: StretchScore | None = None
 
     def status(self, phoneme: str, *, present_threshold: int = 2) -> str:
         """Classify a single phoneme as 'present' / 'approximate' / 'absent'."""
@@ -79,6 +111,122 @@ class PhonemeInventory:
         if c == 1:
             return "approximate"
         return "absent"
+
+
+# Sentences chosen by linguamatch:
+#   mandarin: "Māma qí mǎ, mǎ màn, māma mà mǎ." — tone-driven; only /tɕʰ/ is a
+#     segmental probe English speakers don't have. Tones are not captured by the
+#     eSpeak-CTC phoneme model, so this set is intentionally thin.
+#   arabic:  "Khayṭ ḥarīr ʿalā ḥā'iṭ Khalīl." — rich in pharyngeals and emphatics.
+#
+# Token variants reflect that the model emits IPA-ish eSpeak labels with
+# inconsistent diacritic placement; lists are intentionally generous and will
+# be tightened once we observe real emissions on user audio.
+PROBE_SETS: dict[str, list[PhoneProbe]] = {
+    "mandarin": [
+        PhoneProbe(
+            label="aspirated_palatal_affricate",
+            ipa="tɕʰ",
+            expected_count=1,
+            accept=("tɕʰ", "t͡ɕʰ", "tʃʰ", "t͡ʃʰ"),
+            approximate=("tɕ", "t͡ɕ", "tʃ", "t͡ʃ", "tsʰ", "ts"),
+        ),
+    ],
+    "arabic": [
+        PhoneProbe(
+            label="voiceless_velar_fricative",
+            ipa="x",
+            expected_count=2,
+            accept=("x",),
+            approximate=("k", "kʰ", "h"),
+        ),
+        PhoneProbe(
+            label="voiceless_pharyngeal_fricative",
+            ipa="ħ",
+            expected_count=2,
+            accept=("ħ",),
+            approximate=("h",),
+        ),
+        PhoneProbe(
+            label="voiced_pharyngeal_fricative",
+            ipa="ʕ",
+            expected_count=1,
+            accept=("ʕ",),
+            approximate=("ʔ", "ʌ"),
+        ),
+        PhoneProbe(
+            label="emphatic_t",
+            ipa="tˤ",
+            expected_count=2,
+            accept=("tˤ", "t̪ˤ"),
+            approximate=("t", "tʰ", "t̪"),
+        ),
+        PhoneProbe(
+            label="alveolar_trill",
+            ipa="r",
+            expected_count=1,
+            accept=("r", "rː"),
+            approximate=("ɾ", "ɹ"),
+        ),
+    ],
+}
+
+
+# Map flexible language inputs to canonical PROBE_SETS keys.
+_LANGUAGE_ALIASES: dict[str, str] = {
+    "mandarin": "mandarin",
+    "chinese": "mandarin",
+    "zh": "mandarin",
+    "zh-cn": "mandarin",
+    "zh_cn": "mandarin",
+    "cmn": "mandarin",
+    "arabic": "arabic",
+    "ar": "arabic",
+    "msa": "arabic",
+    "arabic_msa": "arabic",
+}
+
+
+def _canonical_language(expected_language: str | None) -> str | None:
+    if not expected_language:
+        return None
+    return _LANGUAGE_ALIASES.get(expected_language.strip().lower())
+
+
+def score_stretch(inventory: PhonemeInventory, expected_language: str | None) -> StretchScore | None:
+    """Score a stretch clip's phoneme inventory against per-language probe sets.
+
+    Returns None if `expected_language` is missing or unrecognized. Probes are
+    scored independently: a probe is a "hit" if accepted-token count meets the
+    expected count, "approximate" if there's at least one accepted or
+    approximate token but fewer than expected, and "missed" otherwise.
+    """
+    key = _canonical_language(expected_language)
+    if key is None or key not in PROBE_SETS:
+        return None
+
+    results: list[StretchProbeResult] = []
+    for probe in PROBE_SETS[key]:
+        count = sum(inventory.counts.get(tok, 0) for tok in probe.accept)
+        approximate_count = sum(inventory.counts.get(tok, 0) for tok in probe.approximate)
+        if count >= probe.expected_count:
+            status = "hit"
+        elif count >= 1 or approximate_count >= 1:
+            status = "approximate"
+        else:
+            status = "missed"
+        results.append(
+            StretchProbeResult(
+                label=probe.label,
+                ipa=probe.ipa,
+                expected_count=probe.expected_count,
+                count=count,
+                approximate_count=approximate_count,
+                status=status,
+            )
+        )
+
+    return StretchScore(expected_language=key, probes=results)
 
 
 def _ensure_model_loaded() -> None:
@@ -160,8 +308,17 @@ def _decode_with_timing(
     return occurrences
 
 
-def extract_phonemes(sound: parselmouth.Sound) -> PhonemeInventory:
-    """Run the audio through Wav2Vec2-Phoneme and tally phoneme counts + timed occurrences."""
+def extract_phonemes(
+    sound: parselmouth.Sound,
+    *,
+    expected_language: str | None = None,
+) -> PhonemeInventory:
+    """Run the audio through Wav2Vec2-Phoneme and tally phoneme counts + timed occurrences.
+
+    When `expected_language` is provided and matches a known stretch language
+    (mandarin, arabic), the returned inventory also carries a `stretch_score`
+    scoring user-produced tokens against the per-language probe set.
+    """
     if os.getenv("VOICEPRINT_DISABLE_PHONEMES") == "1":
         return PhonemeInventory(counts={}, total_tokens=0, occurrences=[])
 
@@ -191,8 +348,11 @@ def extract_phonemes(sound: parselmouth.Sound) -> PhonemeInventory:
     )
 
     counts = Counter(occ.phoneme for occ in occurrences)
-    return PhonemeInventory(
+    inv = PhonemeInventory(
         counts=dict(counts),
         total_tokens=len(occurrences),
         occurrences=occurrences,
     )
+    if expected_language:
+        inv.stretch_score = score_stretch(inv, expected_language)
+    return inv

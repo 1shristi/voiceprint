@@ -19,6 +19,21 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
 class AnalyzeRequest(BaseModel):
     audio_base64: str = Field(..., description="Base64-encoded audio (webm or wav).")
     format: str = Field(default="webm", description="Audio container format: 'webm' or 'wav'.")
+    # Optional hint for what language the speaker was asked to produce on this clip.
+    # Drives per-language stretch-phoneme scoring (Mandarin tones/retroflexes,
+    # Arabic pharyngeals/emphatics) — see app/services/phonemes.py::PROBE_SETS.
+    expected_language: str | None = Field(
+        default=None,
+        description="Expected language of the clip (e.g. 'mandarin', 'arabic'). Optional hint for stretch-phoneme scoring.",
+    )
+    # Optional hint for what language the speaker CLAIMS to be speaking fluently on
+    # this clip (e.g. their stated L1, or English for the diagnostic). Drives a
+    # marker-based language-match check that flags obvious wrong-language clips.
+    # See app/services/language_check.py.
+    claimed_language: str | None = Field(
+        default=None,
+        description="Language the speaker is claimed to be speaking fluently on this clip. Triggers a language-match check against curated marker phonemes.",
+    )
 
 
 class F0Block(BaseModel):
@@ -42,6 +57,32 @@ class PhonemesBlock(BaseModel):
     total_tokens: int = 0
 
 
+class StretchProbeBlock(BaseModel):
+    label: str
+    ipa: str
+    expected_count: int
+    count: int
+    approximate_count: int
+    status: str  # "hit" | "approximate" | "missed"
+
+
+class StretchPhonemesBlock(BaseModel):
+    expected_language: str
+    probes: list[StretchProbeBlock] = Field(default_factory=list)
+
+
+class LanguageMatchBlock(BaseModel):
+    claimed_language: str
+    # One of: "matches", "uncertain", "mismatch", "insufficient_signal", "unknown_language"
+    verdict: str
+    score: float | None = None
+    positive_hits: int = 0
+    positive_total: int = 0
+    negative_clean: int = 0
+    negative_total: int = 0
+    notes: list[str] = Field(default_factory=list)
+
+
 class VotMeasurementBlock(BaseModel):
     phoneme: str
     time_s: float
@@ -63,6 +104,8 @@ class AnalyzeResponse(BaseModel):
     syllable_rate_hz: float | None = None
     vot: VotBlock = Field(default_factory=VotBlock)
     phonemes: PhonemesBlock = Field(default_factory=PhonemesBlock)
+    stretch_phonemes: StretchPhonemesBlock | None = None
+    language_match: LanguageMatchBlock | None = None
     notes: list[str] = Field(default_factory=list)
 
 
@@ -73,7 +116,12 @@ class AnalyzeResponse(BaseModel):
 )
 def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
     try:
-        features = extractor.extract_all(req.audio_base64, req.format)
+        features = extractor.extract_all(
+            req.audio_base64,
+            req.format,
+            expected_language=req.expected_language,
+            claimed_language=req.claimed_language,
+        )
     except extractor.AudioDecodeError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -119,6 +167,38 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         phonemes=PhonemesBlock(
             counts=features.phoneme_counts,
             total_tokens=features.phoneme_total_tokens,
+        ),
+        stretch_phonemes=(
+            StretchPhonemesBlock(
+                expected_language=features.stretch_score.expected_language,
+                probes=[
+                    StretchProbeBlock(
+                        label=p.label,
+                        ipa=p.ipa,
+                        expected_count=p.expected_count,
+                        count=p.count,
+                        approximate_count=p.approximate_count,
+                        status=p.status,
+                    )
+                    for p in features.stretch_score.probes
+                ],
+            )
+            if features.stretch_score is not None
+            else None
+        ),
+        language_match=(
+            LanguageMatchBlock(
+                claimed_language=features.language_match.claimed_language,
+                verdict=features.language_match.verdict,
+                score=features.language_match.score,
+                positive_hits=features.language_match.positive_hits,
+                positive_total=features.language_match.positive_total,
+                negative_clean=features.language_match.negative_clean,
+                negative_total=features.language_match.negative_total,
+                notes=features.language_match.notes,
+            )
+            if features.language_match is not None
+            else None
         ),
         notes=features.notes,
     )
