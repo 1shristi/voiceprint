@@ -52,6 +52,34 @@ class VotMeasurementOut:
 
 
 @dataclass
+class StretchProbeOut:
+    label: str
+    ipa: str
+    expected_count: int
+    count: int
+    approximate_count: int
+    status: str
+
+
+@dataclass
+class StretchScoreOut:
+    expected_language: str
+    probes: list[StretchProbeOut]
+
+
+@dataclass
+class LanguageMatchOut:
+    claimed_language: str
+    verdict: str
+    score: float | None
+    positive_hits: int
+    positive_total: int
+    negative_clean: int
+    negative_total: int
+    notes: list[str]
+
+
+@dataclass
 class FeatureSet:
     duration_s: float
     f0: F0Result
@@ -63,6 +91,8 @@ class FeatureSet:
     vot_measurements: list[VotMeasurementOut]
     phoneme_counts: dict[str, int]
     phoneme_total_tokens: int
+    stretch_score: StretchScoreOut | None
+    language_match: LanguageMatchOut | None
     notes: list[str]
 
 
@@ -257,7 +287,14 @@ def estimate_syllable_rate(sound: parselmouth.Sound, *, min_dip_db: float = 2.0)
 # ─── Top-level extraction ────────────────────────────────────────────────────
 
 
-def extract_all(audio_b64: str, fmt: str, *, include_phonemes: bool = True) -> FeatureSet:
+def extract_all(
+    audio_b64: str,
+    fmt: str,
+    *,
+    include_phonemes: bool = True,
+    expected_language: str | None = None,
+    claimed_language: str | None = None,
+) -> FeatureSet:
     sound = decode_audio(audio_b64, fmt)
     notes: list[str] = []
 
@@ -275,14 +312,52 @@ def extract_all(audio_b64: str, fmt: str, *, include_phonemes: bool = True) -> F
     phoneme_counts: dict[str, int] = {}
     phoneme_total = 0
     phoneme_occurrences: list = []
+    stretch_out: StretchScoreOut | None = None
+    language_match_out: LanguageMatchOut | None = None
     if include_phonemes:
         try:
             from app.services import phonemes
 
-            inv = phonemes.extract_phonemes(sound)
+            inv = phonemes.extract_phonemes(sound, expected_language=expected_language)
             phoneme_counts = inv.counts
             phoneme_total = inv.total_tokens
             phoneme_occurrences = inv.occurrences
+            if inv.stretch_score is not None:
+                stretch_out = StretchScoreOut(
+                    expected_language=inv.stretch_score.expected_language,
+                    probes=[
+                        StretchProbeOut(
+                            label=p.label,
+                            ipa=p.ipa,
+                            expected_count=p.expected_count,
+                            count=p.count,
+                            approximate_count=p.approximate_count,
+                            status=p.status,
+                        )
+                        for p in inv.stretch_score.probes
+                    ],
+                )
+            elif expected_language:
+                notes.append(f"no stretch probe set for language={expected_language!r}")
+
+            if claimed_language:
+                try:
+                    from app.services import language_check
+
+                    match = language_check.score_language_match(inv, claimed_language)
+                    if match is not None:
+                        language_match_out = LanguageMatchOut(
+                            claimed_language=match.claimed_language,
+                            verdict=match.verdict,
+                            score=match.score,
+                            positive_hits=match.positive_hits,
+                            positive_total=match.positive_total,
+                            negative_clean=match.negative_clean,
+                            negative_total=match.negative_total,
+                            notes=list(match.notes),
+                        )
+                except Exception as e:  # noqa: BLE001 — language match failures are non-fatal
+                    notes.append(f"language match unavailable: {type(e).__name__}")
         except Exception as e:  # noqa: BLE001 — phoneme failures are non-fatal
             notes.append(f"phoneme detection unavailable: {type(e).__name__}")
 
@@ -322,5 +397,7 @@ def extract_all(audio_b64: str, fmt: str, *, include_phonemes: bool = True) -> F
         vot_measurements=vot_measurements_out,
         phoneme_counts=phoneme_counts,
         phoneme_total_tokens=phoneme_total,
+        stretch_score=stretch_out,
+        language_match=language_match_out,
         notes=notes,
     )
