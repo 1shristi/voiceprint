@@ -1,9 +1,29 @@
+import json
 import os
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.services import extractor
+
+
+_ALPHABET_PATH = Path(__file__).resolve().parent.parent / "data" / "phoneme_alphabet.json"
+
+
+def _read_alphabet_version() -> str:
+    """Read the phoneme_alphabet.json `version` field at import time.
+
+    Phase 0 of loop3a: every /analyze response advertises which IPA mapping it
+    was generated against so downstream consumers (linguamatch) can validate
+    their consumption logic matches voiceprint's current alphabet. We surface
+    the version directly from the JSON so the field stays in sync as the
+    alphabet evolves.
+    """
+    return json.loads(_ALPHABET_PATH.read_text(encoding="utf-8"))["version"]
+
+
+PHONEME_ALPHABET_VERSION = _read_alphabet_version()
 
 router = APIRouter()
 
@@ -106,6 +126,10 @@ class AnalyzeResponse(BaseModel):
     phonemes: PhonemesBlock = Field(default_factory=PhonemesBlock)
     stretch_phonemes: StretchPhonemesBlock | None = None
     language_match: LanguageMatchBlock | None = None
+    # Loop 3a Phase 0: the IPA-mapping version this response was generated against.
+    # See app/data/phoneme_alphabet.json. Consumers can use this to validate that
+    # their phoneme consumption logic matches voiceprint's current alphabet.
+    phoneme_alphabet_version: str = PHONEME_ALPHABET_VERSION
     notes: list[str] = Field(default_factory=list)
 
 

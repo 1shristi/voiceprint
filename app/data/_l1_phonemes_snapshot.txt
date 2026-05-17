@@ -1,0 +1,134 @@
+# L1_PHONEMES snapshot from linguamatch
+#
+# Source:        https://github.com/1shristi/linguamatch
+# Path:          supabase/functions/analyze-voice/index.ts
+# Commit SHA:    3973865532da38e761694b3b699021376a11a39c
+# Fetched on:    2026-05-16
+#
+# This file is a verbatim copy of the L1_PHONEMES object literal as it
+# appears in linguamatch's analyze-voice edge function. It is committed
+# here so the notation-drift audit (Phase 0 of loop3a-voiceprint-spec) is
+# reproducible without re-fetching the linguamatch source.
+#
+# DO NOT EDIT BY HAND. Re-run `python scripts/notation_audit.py refresh-snapshot`
+# (or refetch with `gh api`) to update.
+#
+# Note: TypeScript object literals permit duplicate keys; later definitions
+# override earlier ones at runtime. Several keys (yoruba, swahili,
+# hungarian, finnish, estonian, czech, dutch, swedish, norwegian, danish,
+# ukrainian, welsh, catalan, portuguese, malay, indonesian, tagalog, zulu,
+# igbo, lao, burmese, hmong, basque) appear twice in this block. The
+# second occurrence is the one actually used at runtime. The drift
+# catalogue reports the runtime value.
+# ============================================================================
+
+const L1_PHONEMES: Record<string, string[]> = {
+  english:    ["/θ/", "/ð/", "/pʰ/", "/tʰ/", "/kʰ/", "/ɹ/", "/h/"],
+  spanish:    ["/r/", "/ɲ/", "/x/"],
+  french:     ["/ʁ/", "/ɲ/"],
+  german:     ["/pʰ/", "/tʰ/", "/kʰ/", "/ʁ/", "/ç/", "/x/"],
+  italian:    ["/r/", "/ɲ/", "/ʎ/"],
+  portuguese: ["/r/", "/ɲ/", "/ʎ/"],
+  russian:    ["/r/", "/x/"],
+  mandarin:   ["/pʰ/", "/tʰ/", "/kʰ/", "/tɕ/", "/ʈʂ/"],
+  cantonese:  ["/pʰ/", "/tʰ/", "/kʰ/", "/tɕ/"],
+  hindi:      ["/pʰ/", "/tʰ/", "/kʰ/", "/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  urdu:       ["/pʰ/", "/tʰ/", "/kʰ/", "/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/q/", "/x/", "/h/"],
+  bengali:    ["/pʰ/", "/tʰ/", "/kʰ/", "/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  arabic:     ["/q/", "/ħ/", "/ʕ/", "/θ/", "/ð/", "/χ/", "/x/", "/h/"],
+  hebrew:     ["/r/", "/x/", "/ʔ/", "/h/"],
+  thai:       ["/pʰ/", "/tʰ/", "/kʰ/", "/tɕ/", "/h/"],
+  // Filled in from previously-empty entries — Japanese, Korean, Vietnamese, Yoruba.
+  vietnamese: ["/tʰ/", "/kʰ/", "/tɕ/", "/ɲ/", "/h/"],
+  japanese:   ["/ɾ/", "/h/", "/ts/", "/tɕ/", "/dʑ/"],
+  korean:     ["/pʰ/", "/tʰ/", "/kʰ/", "/tɕ/", "/h/", "/ɾ/"],
+  yoruba:     ["/ɲ/", "/h/"],
+  turkish:    ["/r/", "/h/"],
+  polish:     ["/r/", "/x/"],
+  greek:      ["/θ/", "/ð/", "/x/", "/ɣ/"],
+  persian:    ["/q/", "/x/", "/r/", "/h/"],
+  // Adding entries below extends the data only — they're consumed both for L1
+  // filtering (when this is the user's L1) and for compatibility scoring (when
+  // this is a recommendation target).
+  swahili:    ["/r/", "/h/"],
+  hungarian:  ["/r/", "/h/"],
+  finnish:    ["/r/", "/h/"],
+  estonian:   ["/r/", "/h/"],
+  czech:      ["/r/", "/x/", "/h/"],
+  dutch:      ["/x/", "/ʁ/", "/h/"],
+  swedish:    ["/r/", "/h/"],
+  norwegian:  ["/r/", "/h/"],
+  danish:     ["/r/", "/h/"],
+  ukrainian:  ["/r/", "/x/", "/h/"],
+  welsh:      ["/r/", "/x/", "/h/"],
+  catalan:    ["/r/", "/ɲ/", "/ʎ/"],
+  malay:      ["/r/", "/h/"],
+  indonesian: ["/r/", "/h/"],
+  tagalog:    ["/r/", "/ʔ/", "/h/"],
+  zulu:       ["/ǀ/", "/ǃ/", "/ǂ/", "/h/"],
+  igbo:       ["/h/"],
+  lao:        ["/pʰ/", "/tʰ/", "/kʰ/", "/h/"],
+  burmese:    ["/pʰ/", "/tʰ/", "/kʰ/", "/h/"],
+  hmong:      ["/pʰ/", "/tʰ/", "/kʰ/", "/h/"],
+  basque:     ["/r/", "/h/", "/x/"],
+  // South Asian (Dravidian + Indo-Aryan)
+  punjabi:    ["/pʰ/", "/tʰ/", "/kʰ/", "/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  marathi:    ["/pʰ/", "/tʰ/", "/kʰ/", "/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  gujarati:   ["/pʰ/", "/tʰ/", "/kʰ/", "/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  nepali:     ["/pʰ/", "/tʰ/", "/kʰ/", "/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  tamil:      ["/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  telugu:     ["/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  kannada:    ["/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  malayalam:  ["/ʈ/", "/ɖ/", "/r/", "/ɾ/", "/h/"],
+  sinhala:    ["/ʈ/", "/ɖ/", "/r/", "/h/"],
+  // Iranian
+  pashto:     ["/q/", "/x/", "/h/", "/ʈ/", "/ɖ/", "/r/", "/ɾ/"],
+  dari:       ["/q/", "/x/", "/h/", "/r/"],
+  // Ethio-Semitic (notable for ejectives)
+  amharic:    ["/pʼ/", "/tʼ/", "/kʼ/", "/h/", "/ʔ/", "/tʃ/"],
+  tigrinya:   ["/pʼ/", "/tʼ/", "/kʼ/", "/q/", "/h/", "/ʔ/"],
+  // Andean (notable for ejectives + uvular)
+  quechua:    ["/pʼ/", "/tʼ/", "/kʼ/", "/q/", "/h/"],
+  aymara:     ["/pʼ/", "/tʼ/", "/kʼ/", "/q/", "/h/"],
+  // Balkan / Slavic
+  romanian:   ["/r/", "/h/", "/tʃ/", "/ʃ/", "/ts/"],
+  bulgarian:  ["/r/", "/x/", "/h/"],
+  macedonian: ["/r/", "/x/", "/h/", "/tʃ/", "/ts/"],
+  serbian:    ["/r/", "/x/", "/h/", "/tʃ/", "/tɕ/", "/dʒ/"],
+  croatian:   ["/r/", "/x/", "/h/", "/tʃ/", "/tɕ/", "/dʒ/"],
+  bosnian:    ["/r/", "/x/", "/h/", "/tʃ/", "/tɕ/", "/dʒ/"],
+  slovak:     ["/r/", "/x/", "/h/", "/tʃ/"],
+  slovenian:  ["/r/", "/x/", "/h/", "/tʃ/"],
+  belarusian: ["/r/", "/x/", "/h/", "/tʃ/", "/ts/"],
+  // Other
+  mongolian:  ["/h/", "/x/", "/tʃ/"],
+  tibetan:    ["/pʰ/", "/tʰ/", "/kʰ/", "/tʃ/", "/h/"],
+  khmer:      ["/pʰ/", "/tʰ/", "/kʰ/", "/tɕ/", "/h/"],
+  icelandic:  ["/pʰ/", "/tʰ/", "/kʰ/", "/θ/", "/ð/", "/r/", "/h/"],
+  // Adding entries below extends the data only — they're consumed both for L1
+  // filtering (when this is the user's L1) and for compatibility scoring (when
+  // this is a recommendation target).
+  yoruba:     [],  // tonal; doesn't overlap with the Latin-script probe set meaningfully
+  swahili:    ["/r/"],
+  hungarian:  ["/r/"],
+  finnish:    ["/r/"],
+  estonian:   ["/r/"],
+  czech:      ["/r/", "/x/"],
+  dutch:      ["/x/", "/ʁ/"],
+  swedish:    ["/r/"],
+  norwegian:  ["/r/"],
+  danish:     ["/r/"],
+  ukrainian:  ["/r/", "/x/"],
+  welsh:      ["/r/", "/x/"],
+  catalan:    ["/r/"],
+  portuguese: ["/r/"],
+  malay:      ["/r/"],
+  indonesian: ["/r/"],
+  tagalog:    ["/r/"],
+  zulu:       [],  // clicks not in our probe list yet
+  igbo:       [],
+  lao:        ["/pʰ/", "/tʰ/", "/kʰ/"],
+  burmese:    ["/pʰ/", "/tʰ/", "/kʰ/"],
+  hmong:      ["/pʰ/", "/tʰ/", "/kʰ/"],
+  basque:     ["/r/"],
+};

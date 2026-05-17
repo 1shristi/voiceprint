@@ -1,0 +1,3207 @@
+{
+  "_source": "Vocabulary-derived audit of facebook/wav2vec2-lv-60-espeak-cv-ft. Every entry in the model's tokenizer vocabulary is enumerated; X-SAMPA holdouts are translated to IPA against the eSpeak phoneme inventory documentation.",
+  "_audited_at": "2026-05-16",
+  "_audit_script": "scripts/notation_audit.py audit",
+  "_provenance_status": "empirical_with_caveats",
+  "_caveats": [
+    "Vocabulary enumeration is a strict superset of what the model emits; symbols never observed on real audio are still listed so consumers have complete coverage.",
+    "Empirical fixture-based validation has not yet been run on a multilingual corpus; the `fixtures` subcommand exists for that follow-up.",
+    "eSpeak->IPA mapping for X-SAMPA holdouts (N, S, X, tS, dZ, d[, t[, d^, t^, s^, sx, ph, th, kh, ts.h, etc.) follows the eSpeak phoneme inventory documentation; ambiguous mappings are flagged with the 'uncertain' field.",
+    "Tone digits (1, 2, 4, 5) appended to vowels and the ɜ marker represent Mandarin tone categories; descriptions name the tone class but the IPA field uses Chao tone-letter approximations only for the bare tone-1 case."
+  ],
+  "version": "1.0.0",
+  "model": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+  "alphabet": [
+    {
+      "espeak_symbol": "1",
+      "ipa": "˥",
+      "ipa_alternates": [
+        "/˥/"
+      ],
+      "description": "High level tone",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review.",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "??",
+      "ipa": "ʔ",
+      "ipa_alternates": [
+        "/ʔ/"
+      ],
+      "description": "Glottal stop",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review.",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "N",
+      "ipa": "ŋ",
+      "ipa_alternates": [
+        "/ŋ/"
+      ],
+      "description": "Velar nasal",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "S",
+      "ipa": "ʃ",
+      "ipa_alternates": [
+        "/ʃ/"
+      ],
+      "description": "Voiceless postalveolar fricative",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "X",
+      "ipa": "x",
+      "ipa_alternates": [
+        "/x/"
+      ],
+      "description": "Voiceless velar fricative",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "a",
+      "ipa": "a",
+      "ipa_alternates": [
+        "/a/"
+      ],
+      "description": "Open front unrounded vowel"
+    },
+    {
+      "espeak_symbol": "a.",
+      "ipa": "ɑ",
+      "ipa_alternates": [
+        "/ɑ/"
+      ],
+      "description": "Open back unrounded vowel",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "a.ː",
+      "ipa": "ɑː",
+      "ipa_alternates": [
+        "/ɑː/"
+      ],
+      "description": "Open back unrounded vowel (long)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "a1",
+      "ipa": "a˥",
+      "ipa_alternates": [
+        "/a˥/"
+      ],
+      "description": "Open front unrounded vowel + ˥"
+    },
+    {
+      "espeak_symbol": "a2",
+      "ipa": "a2",
+      "ipa_alternates": [
+        "/a2/"
+      ],
+      "description": "Open front unrounded vowel (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "a4",
+      "ipa": "a4",
+      "ipa_alternates": [
+        "/a4/"
+      ],
+      "description": "Open front unrounded vowel (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "a5",
+      "ipa": "a5",
+      "ipa_alternates": [
+        "/a5/"
+      ],
+      "description": "Open front unrounded vowel (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "ai",
+      "ipa": "ai",
+      "ipa_alternates": [
+        "/ai/"
+      ],
+      "description": "Diphthong/triphthong (a + i)"
+    },
+    {
+      "espeak_symbol": "ai2",
+      "ipa": "ai2",
+      "ipa_alternates": [
+        "/ai2/"
+      ],
+      "description": "Diphthong/triphthong (a + i) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "ai5",
+      "ipa": "ai5",
+      "ipa_alternates": [
+        "/ai5/"
+      ],
+      "description": "Diphthong/triphthong (a + i) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "aiɜ",
+      "ipa": "aiɜ",
+      "ipa_alternates": [
+        "/aiɜ/"
+      ],
+      "description": "Diphthong/triphthong (a + i) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "au",
+      "ipa": "au",
+      "ipa_alternates": [
+        "/au/"
+      ],
+      "description": "Diphthong/triphthong (a + u)"
+    },
+    {
+      "espeak_symbol": "aɜ",
+      "ipa": "aɜ",
+      "ipa_alternates": [
+        "/aɜ/"
+      ],
+      "description": "Open front unrounded vowel (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "aɨ",
+      "ipa": "aɨ",
+      "ipa_alternates": [
+        "/aɨ/"
+      ],
+      "description": "Diphthong/triphthong (a + ɨ)"
+    },
+    {
+      "espeak_symbol": "aɪ",
+      "ipa": "aɪ",
+      "ipa_alternates": [
+        "/aɪ/"
+      ],
+      "description": "Diphthong/triphthong (a + ɪ)"
+    },
+    {
+      "espeak_symbol": "aɪə",
+      "ipa": "aɪə",
+      "ipa_alternates": [
+        "/aɪə/"
+      ],
+      "description": "Open front unrounded vowel + ɪ + ə"
+    },
+    {
+      "espeak_symbol": "aɪɚ",
+      "ipa": "aɪɚ",
+      "ipa_alternates": [
+        "/aɪɚ/"
+      ],
+      "description": "Open front unrounded vowel + ɪ + ɚ"
+    },
+    {
+      "espeak_symbol": "aʊ",
+      "ipa": "aʊ",
+      "ipa_alternates": [
+        "/aʊ/"
+      ],
+      "description": "Diphthong/triphthong (a + ʊ)"
+    },
+    {
+      "espeak_symbol": "aː",
+      "ipa": "aː",
+      "ipa_alternates": [
+        "/aː/"
+      ],
+      "description": "Open front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ã",
+      "ipa": "ã",
+      "ipa_alternates": [
+        "/ã/"
+      ],
+      "description": "Open front unrounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "b",
+      "ipa": "b",
+      "ipa_alternates": [
+        "/b/"
+      ],
+      "description": "Voiced bilabial stop"
+    },
+    {
+      "espeak_symbol": "bʰ",
+      "ipa": "bʰ",
+      "ipa_alternates": [
+        "/bʰ/"
+      ],
+      "description": "Voiced bilabial stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "bʲ",
+      "ipa": "bʲ",
+      "ipa_alternates": [
+        "/bʲ/"
+      ],
+      "description": "Voiced bilabial stop (palatalised)"
+    },
+    {
+      "espeak_symbol": "bː",
+      "ipa": "bː",
+      "ipa_alternates": [
+        "/bː/"
+      ],
+      "description": "Voiced bilabial stop (long)"
+    },
+    {
+      "espeak_symbol": "c",
+      "ipa": "c",
+      "ipa_alternates": [
+        "/c/"
+      ],
+      "description": "Voiceless palatal stop"
+    },
+    {
+      "espeak_symbol": "cʰ",
+      "ipa": "cʰ",
+      "ipa_alternates": [
+        "/cʰ/"
+      ],
+      "description": "Voiceless palatal stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "cʰcʰ",
+      "ipa": "cʰcʰ",
+      "ipa_alternates": [
+        "/cʰcʰ/"
+      ],
+      "description": "Voiceless palatal stop + c (aspirated)"
+    },
+    {
+      "espeak_symbol": "cː",
+      "ipa": "cː",
+      "ipa_alternates": [
+        "/cː/"
+      ],
+      "description": "Voiceless palatal stop (long)"
+    },
+    {
+      "espeak_symbol": "d",
+      "ipa": "d",
+      "ipa_alternates": [
+        "/d/"
+      ],
+      "description": "Voiced alveolar stop"
+    },
+    {
+      "espeak_symbol": "dZ",
+      "ipa": "dʒ",
+      "ipa_alternates": [
+        "/dʒ/",
+        "d͡ʒ",
+        "/d͡ʒ/"
+      ],
+      "description": "Affricate",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "d[",
+      "ipa": "d̪",
+      "ipa_alternates": [
+        "/d̪/"
+      ],
+      "description": "Voiced alveolar stop (dental)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "d^",
+      "ipa": "ɖ",
+      "ipa_alternates": [
+        "/ɖ/"
+      ],
+      "description": "Voiced retroflex stop",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review.",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "dzː",
+      "ipa": "dzː",
+      "ipa_alternates": [
+        "/dzː/",
+        "d͡zː"
+      ],
+      "description": "Voiced alveolar stop + z (long)"
+    },
+    {
+      "espeak_symbol": "dʑ",
+      "ipa": "dʑ",
+      "ipa_alternates": [
+        "/dʑ/",
+        "d͡ʑ",
+        "/d͡ʑ/"
+      ],
+      "description": "Affricate"
+    },
+    {
+      "espeak_symbol": "dʑʲ",
+      "ipa": "dʑʲ",
+      "ipa_alternates": [
+        "/dʑʲ/",
+        "d͡ʑʲ"
+      ],
+      "description": "Voiced alveolar stop + ʑ (palatalised)"
+    },
+    {
+      "espeak_symbol": "dʒ",
+      "ipa": "dʒ",
+      "ipa_alternates": [
+        "/dʒ/",
+        "d͡ʒ",
+        "/d͡ʒ/"
+      ],
+      "description": "Affricate"
+    },
+    {
+      "espeak_symbol": "dʒʲ",
+      "ipa": "dʒʲ",
+      "ipa_alternates": [
+        "/dʒʲ/",
+        "d͡ʒʲ"
+      ],
+      "description": "Voiced alveolar stop + ʒ (palatalised)"
+    },
+    {
+      "espeak_symbol": "dʒː",
+      "ipa": "dʒː",
+      "ipa_alternates": [
+        "/dʒː/",
+        "d͡ʒː"
+      ],
+      "description": "Voiced alveolar stop + ʒ (long)"
+    },
+    {
+      "espeak_symbol": "dʰ",
+      "ipa": "dʰ",
+      "ipa_alternates": [
+        "/dʰ/"
+      ],
+      "description": "Voiced alveolar stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "dʰː",
+      "ipa": "dʰː",
+      "ipa_alternates": [
+        "/dʰː/"
+      ],
+      "description": "Voiced alveolar stop (aspirated, long)"
+    },
+    {
+      "espeak_symbol": "dʲ",
+      "ipa": "dʲ",
+      "ipa_alternates": [
+        "/dʲ/"
+      ],
+      "description": "Voiced alveolar stop (palatalised)"
+    },
+    {
+      "espeak_symbol": "dʲʲ",
+      "ipa": "dʲʲ",
+      "ipa_alternates": [
+        "/dʲʲ/"
+      ],
+      "description": "Voiced alveolar stop (palatalised)"
+    },
+    {
+      "espeak_symbol": "dː",
+      "ipa": "dː",
+      "ipa_alternates": [
+        "/dː/"
+      ],
+      "description": "Voiced alveolar stop (long)"
+    },
+    {
+      "espeak_symbol": "dˤ",
+      "ipa": "dˤ",
+      "ipa_alternates": [
+        "/dˤ/"
+      ],
+      "description": "Voiced alveolar stop (pharyngealised)"
+    },
+    {
+      "espeak_symbol": "dˤdˤ",
+      "ipa": "dˤdˤ",
+      "ipa_alternates": [
+        "/dˤdˤ/"
+      ],
+      "description": "Voiced alveolar stop + d (pharyngealised)"
+    },
+    {
+      "espeak_symbol": "e",
+      "ipa": "e",
+      "ipa_alternates": [
+        "/e/"
+      ],
+      "description": "Close-mid front unrounded vowel"
+    },
+    {
+      "espeak_symbol": "e:",
+      "ipa": "eː",
+      "ipa_alternates": [
+        "/eː/"
+      ],
+      "description": "Close-mid front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ee",
+      "ipa": "ee",
+      "ipa_alternates": [
+        "/ee/"
+      ],
+      "description": "Diphthong/triphthong (e + e)"
+    },
+    {
+      "espeak_symbol": "ei2",
+      "ipa": "ei2",
+      "ipa_alternates": [
+        "/ei2/"
+      ],
+      "description": "Diphthong/triphthong (e + i) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "ei5",
+      "ipa": "ei5",
+      "ipa_alternates": [
+        "/ei5/"
+      ],
+      "description": "Diphthong/triphthong (e + i) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "eiɜ",
+      "ipa": "eiɜ",
+      "ipa_alternates": [
+        "/eiɜ/"
+      ],
+      "description": "Diphthong/triphthong (e + i) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "eɑ",
+      "ipa": "eɑ",
+      "ipa_alternates": [
+        "/eɑ/"
+      ],
+      "description": "Diphthong/triphthong (e + ɑ)"
+    },
+    {
+      "espeak_symbol": "eə",
+      "ipa": "eə",
+      "ipa_alternates": [
+        "/eə/"
+      ],
+      "description": "Close-mid front unrounded vowel + ə"
+    },
+    {
+      "espeak_symbol": "eɪ",
+      "ipa": "eɪ",
+      "ipa_alternates": [
+        "/eɪ/"
+      ],
+      "description": "Diphthong/triphthong (e + ɪ)"
+    },
+    {
+      "espeak_symbol": "eʊ",
+      "ipa": "eʊ",
+      "ipa_alternates": [
+        "/eʊ/"
+      ],
+      "description": "Diphthong/triphthong (e + ʊ)"
+    },
+    {
+      "espeak_symbol": "eː",
+      "ipa": "eː",
+      "ipa_alternates": [
+        "/eː/"
+      ],
+      "description": "Close-mid front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ẽ",
+      "ipa": "ẽ",
+      "ipa_alternates": [
+        "/ẽ/"
+      ],
+      "description": "Close-mid front unrounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "ẽː",
+      "ipa": "ẽː",
+      "ipa_alternates": [
+        "/ẽː/"
+      ],
+      "description": "Close-mid front unrounded vowel (nasalised, long)"
+    },
+    {
+      "espeak_symbol": "e̞",
+      "ipa": "e̞",
+      "ipa_alternates": [
+        "/e̞/"
+      ],
+      "description": "Close-mid front unrounded vowel (lowered)"
+    },
+    {
+      "espeak_symbol": "e̞e̞",
+      "ipa": "e̞e̞",
+      "ipa_alternates": [
+        "/e̞e̞/"
+      ],
+      "description": "Diphthong/triphthong (e + e) (lowered)"
+    },
+    {
+      "espeak_symbol": "f",
+      "ipa": "f",
+      "ipa_alternates": [
+        "/f/"
+      ],
+      "description": "Voiceless labiodental fricative"
+    },
+    {
+      "espeak_symbol": "fʲ",
+      "ipa": "fʲ",
+      "ipa_alternates": [
+        "/fʲ/"
+      ],
+      "description": "Voiceless labiodental fricative (palatalised)"
+    },
+    {
+      "espeak_symbol": "h",
+      "ipa": "h",
+      "ipa_alternates": [
+        "/h/"
+      ],
+      "description": "Voiceless glottal fricative"
+    },
+    {
+      "espeak_symbol": "i",
+      "ipa": "i",
+      "ipa_alternates": [
+        "/i/"
+      ],
+      "description": "Close front unrounded vowel"
+    },
+    {
+      "espeak_symbol": "i.",
+      "ipa": "ɨ",
+      "ipa_alternates": [
+        "/ɨ/"
+      ],
+      "description": "Close central unrounded vowel",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "i.1",
+      "ipa": "ɨ˥",
+      "ipa_alternates": [
+        "/ɨ˥/"
+      ],
+      "description": "Close central unrounded vowel + ˥",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "i.2",
+      "ipa": "ɨ˧˥",
+      "ipa_alternates": [
+        "/ɨ˧˥/"
+      ],
+      "description": "Close central unrounded vowel + ˥",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "i.4",
+      "ipa": "ɨ˥˩",
+      "ipa_alternates": [
+        "/ɨ˥˩/"
+      ],
+      "description": "Close central unrounded vowel + ˥",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "i.5",
+      "ipa": "ɨ",
+      "ipa_alternates": [
+        "/ɨ/"
+      ],
+      "description": "Close central unrounded vowel",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "i.ɜ",
+      "ipa": "ɨ˨˩˦",
+      "ipa_alternates": [
+        "/ɨ˨˩˦/"
+      ],
+      "description": "Close central unrounded vowel",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "i.ː",
+      "ipa": "ɨː",
+      "ipa_alternates": [
+        "/ɨː/"
+      ],
+      "description": "Close central unrounded vowel (long)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "i1",
+      "ipa": "i˥",
+      "ipa_alternates": [
+        "/i˥/"
+      ],
+      "description": "Close front unrounded vowel + ˥"
+    },
+    {
+      "espeak_symbol": "i2",
+      "ipa": "i2",
+      "ipa_alternates": [
+        "/i2/"
+      ],
+      "description": "Close front unrounded vowel (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "i4",
+      "ipa": "i4",
+      "ipa_alternates": [
+        "/i4/"
+      ],
+      "description": "Close front unrounded vowel (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "i5",
+      "ipa": "i5",
+      "ipa_alternates": [
+        "/i5/"
+      ],
+      "description": "Close front unrounded vowel (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "i:",
+      "ipa": "iː",
+      "ipa_alternates": [
+        "/iː/"
+      ],
+      "description": "Close front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ie",
+      "ipa": "ie",
+      "ipa_alternates": [
+        "/ie/"
+      ],
+      "description": "Diphthong/triphthong (i + e)"
+    },
+    {
+      "espeak_symbol": "iou1",
+      "ipa": "iou˥",
+      "ipa_alternates": [
+        "/iou˥/"
+      ],
+      "description": "Close front unrounded vowel + o + u + ˥"
+    },
+    {
+      "espeak_symbol": "iou2",
+      "ipa": "iou2",
+      "ipa_alternates": [
+        "/iou2/"
+      ],
+      "description": "Diphthong/triphthong (i + o + u) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "iou4",
+      "ipa": "iou4",
+      "ipa_alternates": [
+        "/iou4/"
+      ],
+      "description": "Diphthong/triphthong (i + o + u) (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "iou5",
+      "ipa": "iou5",
+      "ipa_alternates": [
+        "/iou5/"
+      ],
+      "description": "Diphthong/triphthong (i + o + u) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "iouɜ",
+      "ipa": "iouɜ",
+      "ipa_alternates": [
+        "/iouɜ/"
+      ],
+      "description": "Diphthong/triphthong (i + o + u) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "iɑ1",
+      "ipa": "iɑ˥",
+      "ipa_alternates": [
+        "/iɑ˥/"
+      ],
+      "description": "Close front unrounded vowel + ɑ + ˥"
+    },
+    {
+      "espeak_symbol": "iɑ2",
+      "ipa": "iɑ2",
+      "ipa_alternates": [
+        "/iɑ2/"
+      ],
+      "description": "Diphthong/triphthong (i + ɑ) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "iɑ5",
+      "ipa": "iɑ5",
+      "ipa_alternates": [
+        "/iɑ5/"
+      ],
+      "description": "Diphthong/triphthong (i + ɑ) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "iɑɜ",
+      "ipa": "iɑɜ",
+      "ipa_alternates": [
+        "/iɑɜ/"
+      ],
+      "description": "Diphthong/triphthong (i + ɑ) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "iə",
+      "ipa": "iə",
+      "ipa_alternates": [
+        "/iə/"
+      ],
+      "description": "Close front unrounded vowel + ə"
+    },
+    {
+      "espeak_symbol": "iɛ1",
+      "ipa": "iɛ˥",
+      "ipa_alternates": [
+        "/iɛ˥/"
+      ],
+      "description": "Close front unrounded vowel + ɛ + ˥"
+    },
+    {
+      "espeak_symbol": "iɛ2",
+      "ipa": "iɛ2",
+      "ipa_alternates": [
+        "/iɛ2/"
+      ],
+      "description": "Diphthong/triphthong (i + ɛ) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "iɛ4",
+      "ipa": "iɛ4",
+      "ipa_alternates": [
+        "/iɛ4/"
+      ],
+      "description": "Diphthong/triphthong (i + ɛ) (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "iɛ5",
+      "ipa": "iɛ5",
+      "ipa_alternates": [
+        "/iɛ5/"
+      ],
+      "description": "Diphthong/triphthong (i + ɛ) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "iɛɜ",
+      "ipa": "iɛɜ",
+      "ipa_alternates": [
+        "/iɛɜ/"
+      ],
+      "description": "Diphthong/triphthong (i + ɛ) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "iɜ",
+      "ipa": "iɜ",
+      "ipa_alternates": [
+        "/iɜ/"
+      ],
+      "description": "Close front unrounded vowel (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "iʊ",
+      "ipa": "iʊ",
+      "ipa_alternates": [
+        "/iʊ/"
+      ],
+      "description": "Diphthong/triphthong (i + ʊ)"
+    },
+    {
+      "espeak_symbol": "iː",
+      "ipa": "iː",
+      "ipa_alternates": [
+        "/iː/"
+      ],
+      "description": "Close front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "iː1",
+      "ipa": "iː˥",
+      "ipa_alternates": [
+        "/iː˥/"
+      ],
+      "description": "Close front unrounded vowel + ˥ (long)"
+    },
+    {
+      "espeak_symbol": "iːː",
+      "ipa": "iːː",
+      "ipa_alternates": [
+        "/iːː/"
+      ],
+      "description": "Close front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ĩ",
+      "ipa": "ĩ",
+      "ipa_alternates": [
+        "/ĩ/"
+      ],
+      "description": "Close front unrounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "i̪1",
+      "ipa": "i̪˥",
+      "ipa_alternates": [
+        "/i̪˥/"
+      ],
+      "description": "Close front unrounded vowel + ˥ (dental)"
+    },
+    {
+      "espeak_symbol": "i̪2",
+      "ipa": "i̪2",
+      "ipa_alternates": [
+        "/i̪2/"
+      ],
+      "description": "Close front unrounded vowel (dental) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "i̪4",
+      "ipa": "i̪4",
+      "ipa_alternates": [
+        "/i̪4/"
+      ],
+      "description": "Close front unrounded vowel (dental) (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "i̪5",
+      "ipa": "i̪5",
+      "ipa_alternates": [
+        "/i̪5/"
+      ],
+      "description": "Close front unrounded vowel (dental) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "i̪ɜ",
+      "ipa": "i̪ɜ",
+      "ipa_alternates": [
+        "/i̪ɜ/"
+      ],
+      "description": "Close front unrounded vowel (dental) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "j",
+      "ipa": "j",
+      "ipa_alternates": [
+        "/j/"
+      ],
+      "description": "Palatal approximant"
+    },
+    {
+      "espeak_symbol": "ja",
+      "ipa": "ja",
+      "ipa_alternates": [
+        "/ja/"
+      ],
+      "description": "Palatal approximant + a"
+    },
+    {
+      "espeak_symbol": "ju",
+      "ipa": "ju",
+      "ipa_alternates": [
+        "/ju/"
+      ],
+      "description": "Palatal approximant + u"
+    },
+    {
+      "espeak_symbol": "k",
+      "ipa": "k",
+      "ipa_alternates": [
+        "/k/"
+      ],
+      "description": "Voiceless velar stop"
+    },
+    {
+      "espeak_symbol": "kh",
+      "ipa": "kʰ",
+      "ipa_alternates": [
+        "/kʰ/"
+      ],
+      "description": "Voiceless velar stop (aspirated)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "kʰ",
+      "ipa": "kʰ",
+      "ipa_alternates": [
+        "/kʰ/"
+      ],
+      "description": "Voiceless velar stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "kʰː",
+      "ipa": "kʰː",
+      "ipa_alternates": [
+        "/kʰː/"
+      ],
+      "description": "Voiceless velar stop (aspirated, long)"
+    },
+    {
+      "espeak_symbol": "kʲ",
+      "ipa": "kʲ",
+      "ipa_alternates": [
+        "/kʲ/"
+      ],
+      "description": "Voiceless velar stop (palatalised)"
+    },
+    {
+      "espeak_symbol": "kː",
+      "ipa": "kː",
+      "ipa_alternates": [
+        "/kː/"
+      ],
+      "description": "Voiceless velar stop (long)"
+    },
+    {
+      "espeak_symbol": "l",
+      "ipa": "l",
+      "ipa_alternates": [
+        "/l/"
+      ],
+      "description": "Alveolar lateral"
+    },
+    {
+      "espeak_symbol": "lː",
+      "ipa": "lː",
+      "ipa_alternates": [
+        "/lː/"
+      ],
+      "description": "Alveolar lateral (long)"
+    },
+    {
+      "espeak_symbol": "l̩",
+      "ipa": "l̩",
+      "ipa_alternates": [
+        "/l̩/"
+      ],
+      "description": "Alveolar lateral (syllabic)"
+    },
+    {
+      "espeak_symbol": "m",
+      "ipa": "m",
+      "ipa_alternates": [
+        "/m/"
+      ],
+      "description": "Bilabial nasal"
+    },
+    {
+      "espeak_symbol": "mʲ",
+      "ipa": "mʲ",
+      "ipa_alternates": [
+        "/mʲ/"
+      ],
+      "description": "Bilabial nasal (palatalised)"
+    },
+    {
+      "espeak_symbol": "n",
+      "ipa": "n",
+      "ipa_alternates": [
+        "/n/"
+      ],
+      "description": "Alveolar nasal"
+    },
+    {
+      "espeak_symbol": "nʲ",
+      "ipa": "nʲ",
+      "ipa_alternates": [
+        "/nʲ/"
+      ],
+      "description": "Alveolar nasal (palatalised)"
+    },
+    {
+      "espeak_symbol": "nʲʲ",
+      "ipa": "nʲʲ",
+      "ipa_alternates": [
+        "/nʲʲ/"
+      ],
+      "description": "Alveolar nasal (palatalised)"
+    },
+    {
+      "espeak_symbol": "n̩",
+      "ipa": "n̩",
+      "ipa_alternates": [
+        "/n̩/"
+      ],
+      "description": "Alveolar nasal (syllabic)"
+    },
+    {
+      "espeak_symbol": "o",
+      "ipa": "o",
+      "ipa_alternates": [
+        "/o/"
+      ],
+      "description": "Close-mid back rounded vowel"
+    },
+    {
+      "espeak_symbol": "o1",
+      "ipa": "o˥",
+      "ipa_alternates": [
+        "/o˥/"
+      ],
+      "description": "Close-mid back rounded vowel + ˥"
+    },
+    {
+      "espeak_symbol": "o2",
+      "ipa": "o2",
+      "ipa_alternates": [
+        "/o2/"
+      ],
+      "description": "Close-mid back rounded vowel (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "o4",
+      "ipa": "o4",
+      "ipa_alternates": [
+        "/o4/"
+      ],
+      "description": "Close-mid back rounded vowel (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "o5",
+      "ipa": "o5",
+      "ipa_alternates": [
+        "/o5/"
+      ],
+      "description": "Close-mid back rounded vowel (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "o:",
+      "ipa": "oː",
+      "ipa_alternates": [
+        "/oː/"
+      ],
+      "description": "Close-mid back rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "oe",
+      "ipa": "oe",
+      "ipa_alternates": [
+        "/oe/"
+      ],
+      "description": "Diphthong/triphthong (o + e)"
+    },
+    {
+      "espeak_symbol": "oe:",
+      "ipa": "oeː",
+      "ipa_alternates": [
+        "/oeː/"
+      ],
+      "description": "Diphthong/triphthong (o + e) (long)"
+    },
+    {
+      "espeak_symbol": "onɡ2",
+      "ipa": "onɡ2",
+      "ipa_alternates": [
+        "/onɡ2/"
+      ],
+      "description": "Close-mid back rounded vowel + n + ɡ (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "onɡ5",
+      "ipa": "onɡ5",
+      "ipa_alternates": [
+        "/onɡ5/"
+      ],
+      "description": "Close-mid back rounded vowel + n + ɡ (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "onɡɜ",
+      "ipa": "onɡɜ",
+      "ipa_alternates": [
+        "/onɡɜ/"
+      ],
+      "description": "Close-mid back rounded vowel + n + ɡ (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "ou1",
+      "ipa": "ou˥",
+      "ipa_alternates": [
+        "/ou˥/"
+      ],
+      "description": "Close-mid back rounded vowel + u + ˥"
+    },
+    {
+      "espeak_symbol": "ou2",
+      "ipa": "ou2",
+      "ipa_alternates": [
+        "/ou2/"
+      ],
+      "description": "Diphthong/triphthong (o + u) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "ou5",
+      "ipa": "ou5",
+      "ipa_alternates": [
+        "/ou5/"
+      ],
+      "description": "Diphthong/triphthong (o + u) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "ouɜ",
+      "ipa": "ouɜ",
+      "ipa_alternates": [
+        "/ouɜ/"
+      ],
+      "description": "Diphthong/triphthong (o + u) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "oɜ",
+      "ipa": "oɜ",
+      "ipa_alternates": [
+        "/oɜ/"
+      ],
+      "description": "Close-mid back rounded vowel (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "oɪ",
+      "ipa": "oɪ",
+      "ipa_alternates": [
+        "/oɪ/"
+      ],
+      "description": "Diphthong/triphthong (o + ɪ)"
+    },
+    {
+      "espeak_symbol": "oʊ",
+      "ipa": "oʊ",
+      "ipa_alternates": [
+        "/oʊ/"
+      ],
+      "description": "Diphthong/triphthong (o + ʊ)"
+    },
+    {
+      "espeak_symbol": "oː",
+      "ipa": "oː",
+      "ipa_alternates": [
+        "/oː/"
+      ],
+      "description": "Close-mid back rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "oːɹ",
+      "ipa": "oːɹ",
+      "ipa_alternates": [
+        "/oːɹ/"
+      ],
+      "description": "Close-mid back rounded vowel + ɹ (long)"
+    },
+    {
+      "espeak_symbol": "õ",
+      "ipa": "õ",
+      "ipa_alternates": [
+        "/õ/"
+      ],
+      "description": "Close-mid back rounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "o̞",
+      "ipa": "o̞",
+      "ipa_alternates": [
+        "/o̞/"
+      ],
+      "description": "Close-mid back rounded vowel (lowered)"
+    },
+    {
+      "espeak_symbol": "o̞o̞",
+      "ipa": "o̞o̞",
+      "ipa_alternates": [
+        "/o̞o̞/"
+      ],
+      "description": "Diphthong/triphthong (o + o) (lowered)"
+    },
+    {
+      "espeak_symbol": "p",
+      "ipa": "p",
+      "ipa_alternates": [
+        "/p/"
+      ],
+      "description": "Voiceless bilabial stop"
+    },
+    {
+      "espeak_symbol": "pf",
+      "ipa": "pf",
+      "ipa_alternates": [
+        "/pf/",
+        "p͡f",
+        "/p͡f/"
+      ],
+      "description": "Affricate"
+    },
+    {
+      "espeak_symbol": "ph",
+      "ipa": "pʰ",
+      "ipa_alternates": [
+        "/pʰ/"
+      ],
+      "description": "Voiceless bilabial stop (aspirated)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "pʰ",
+      "ipa": "pʰ",
+      "ipa_alternates": [
+        "/pʰ/"
+      ],
+      "description": "Voiceless bilabial stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "pʲ",
+      "ipa": "pʲ",
+      "ipa_alternates": [
+        "/pʲ/"
+      ],
+      "description": "Voiceless bilabial stop (palatalised)"
+    },
+    {
+      "espeak_symbol": "pː",
+      "ipa": "pː",
+      "ipa_alternates": [
+        "/pː/"
+      ],
+      "description": "Voiceless bilabial stop (long)"
+    },
+    {
+      "espeak_symbol": "q",
+      "ipa": "q",
+      "ipa_alternates": [
+        "/q/"
+      ],
+      "description": "Voiceless uvular stop"
+    },
+    {
+      "espeak_symbol": "qː",
+      "ipa": "qː",
+      "ipa_alternates": [
+        "/qː/"
+      ],
+      "description": "Voiceless uvular stop (long)"
+    },
+    {
+      "espeak_symbol": "r",
+      "ipa": "r",
+      "ipa_alternates": [
+        "/r/"
+      ],
+      "description": "Alveolar trill"
+    },
+    {
+      "espeak_symbol": "r.",
+      "ipa": "ɻ",
+      "ipa_alternates": [
+        "/ɻ/"
+      ],
+      "description": "Retroflex approximant",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "rʲ",
+      "ipa": "rʲ",
+      "ipa_alternates": [
+        "/rʲ/"
+      ],
+      "description": "Alveolar trill (palatalised)"
+    },
+    {
+      "espeak_symbol": "r̝",
+      "ipa": "r̝",
+      "ipa_alternates": [
+        "/r̝/"
+      ],
+      "description": "Alveolar trill (raised)"
+    },
+    {
+      "espeak_symbol": "r̝̊",
+      "ipa": "r̝̊",
+      "ipa_alternates": [
+        "/r̝̊/"
+      ],
+      "description": "Alveolar trill (raised, voiceless)"
+    },
+    {
+      "espeak_symbol": "r̩",
+      "ipa": "r̩",
+      "ipa_alternates": [
+        "/r̩/"
+      ],
+      "description": "Alveolar trill (syllabic)"
+    },
+    {
+      "espeak_symbol": "s",
+      "ipa": "s",
+      "ipa_alternates": [
+        "/s/"
+      ],
+      "description": "Voiceless alveolar fricative"
+    },
+    {
+      "espeak_symbol": "s.",
+      "ipa": "ʂ",
+      "ipa_alternates": [
+        "/ʂ/"
+      ],
+      "description": "Voiceless retroflex fricative",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "s^",
+      "ipa": "ʂ",
+      "ipa_alternates": [
+        "/ʂ/"
+      ],
+      "description": "Voiceless retroflex fricative",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review.",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "sx",
+      "ipa": "sx",
+      "ipa_alternates": [
+        "/sx/"
+      ],
+      "description": "Voiceless alveolar fricative + x",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review."
+    },
+    {
+      "espeak_symbol": "sʲ",
+      "ipa": "sʲ",
+      "ipa_alternates": [
+        "/sʲ/"
+      ],
+      "description": "Voiceless alveolar fricative (palatalised)"
+    },
+    {
+      "espeak_symbol": "s̪",
+      "ipa": "s̪",
+      "ipa_alternates": [
+        "/s̪/"
+      ],
+      "description": "Voiceless alveolar fricative (dental)"
+    },
+    {
+      "espeak_symbol": "s̪ː",
+      "ipa": "s̪ː",
+      "ipa_alternates": [
+        "/s̪ː/"
+      ],
+      "description": "Voiceless alveolar fricative (dental, long)"
+    },
+    {
+      "espeak_symbol": "t",
+      "ipa": "t",
+      "ipa_alternates": [
+        "/t/"
+      ],
+      "description": "Voiceless alveolar stop"
+    },
+    {
+      "espeak_symbol": "tS",
+      "ipa": "tʃ",
+      "ipa_alternates": [
+        "/tʃ/",
+        "t͡ʃ",
+        "/t͡ʃ/"
+      ],
+      "description": "Affricate",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "t[",
+      "ipa": "t̪",
+      "ipa_alternates": [
+        "/t̪/"
+      ],
+      "description": "Voiceless alveolar stop (dental)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "t^",
+      "ipa": "ʈ",
+      "ipa_alternates": [
+        "/ʈ/"
+      ],
+      "description": "Voiceless retroflex stop",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review.",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "t^ː",
+      "ipa": "ʈː",
+      "ipa_alternates": [
+        "/ʈː/"
+      ],
+      "description": "Voiceless retroflex stop (long)",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review.",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "th",
+      "ipa": "tʰ",
+      "ipa_alternates": [
+        "/tʰ/"
+      ],
+      "description": "Voiceless alveolar stop (aspirated)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "ts",
+      "ipa": "ts",
+      "ipa_alternates": [
+        "/ts/",
+        "t͡s",
+        "/t͡s/"
+      ],
+      "description": "Affricate"
+    },
+    {
+      "espeak_symbol": "ts.",
+      "ipa": "tʂ",
+      "ipa_alternates": [
+        "/tʂ/",
+        "t͡ʂ",
+        "/t͡ʂ/",
+        "ʈʂ",
+        "/ʈʂ/"
+      ],
+      "description": "Affricate",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "ts.h",
+      "ipa": "tʂʰ",
+      "ipa_alternates": [
+        "/tʂʰ/",
+        "t͡ʂʰ",
+        "ʈʂʰ",
+        "/ʈʂʰ/"
+      ],
+      "description": "Voiceless alveolar stop + ʂ (aspirated)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "tsh",
+      "ipa": "tsʰ",
+      "ipa_alternates": [
+        "/tsʰ/",
+        "t͡sʰ"
+      ],
+      "description": "Voiceless alveolar stop + s (aspirated)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "tsʲ",
+      "ipa": "tsʲ",
+      "ipa_alternates": [
+        "/tsʲ/",
+        "t͡sʲ"
+      ],
+      "description": "Voiceless alveolar stop + s (palatalised)"
+    },
+    {
+      "espeak_symbol": "tsː",
+      "ipa": "tsː",
+      "ipa_alternates": [
+        "/tsː/",
+        "t͡sː"
+      ],
+      "description": "Voiceless alveolar stop + s (long)"
+    },
+    {
+      "espeak_symbol": "tɕ",
+      "ipa": "tɕ",
+      "ipa_alternates": [
+        "/tɕ/",
+        "t͡ɕ",
+        "/t͡ɕ/"
+      ],
+      "description": "Affricate"
+    },
+    {
+      "espeak_symbol": "tɕh",
+      "ipa": "tɕʰ",
+      "ipa_alternates": [
+        "/tɕʰ/",
+        "t͡ɕʰ"
+      ],
+      "description": "Voiceless alveolar stop + ɕ (aspirated)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "tɕʲ",
+      "ipa": "tɕʲ",
+      "ipa_alternates": [
+        "/tɕʲ/",
+        "t͡ɕʲ"
+      ],
+      "description": "Voiceless alveolar stop + ɕ (palatalised)"
+    },
+    {
+      "espeak_symbol": "tʃ",
+      "ipa": "tʃ",
+      "ipa_alternates": [
+        "/tʃ/",
+        "t͡ʃ",
+        "/t͡ʃ/"
+      ],
+      "description": "Affricate"
+    },
+    {
+      "espeak_symbol": "tʃʰ",
+      "ipa": "tʃʰ",
+      "ipa_alternates": [
+        "/tʃʰ/",
+        "t͡ʃʰ"
+      ],
+      "description": "Voiceless alveolar stop + ʃ (aspirated)"
+    },
+    {
+      "espeak_symbol": "tʃʲ",
+      "ipa": "tʃʲ",
+      "ipa_alternates": [
+        "/tʃʲ/",
+        "t͡ʃʲ"
+      ],
+      "description": "Voiceless alveolar stop + ʃ (palatalised)"
+    },
+    {
+      "espeak_symbol": "tʃː",
+      "ipa": "tʃː",
+      "ipa_alternates": [
+        "/tʃː/",
+        "t͡ʃː"
+      ],
+      "description": "Voiceless alveolar stop + ʃ (long)"
+    },
+    {
+      "espeak_symbol": "tʰ",
+      "ipa": "tʰ",
+      "ipa_alternates": [
+        "/tʰ/"
+      ],
+      "description": "Voiceless alveolar stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "tʲ",
+      "ipa": "tʲ",
+      "ipa_alternates": [
+        "/tʲ/"
+      ],
+      "description": "Voiceless alveolar stop (palatalised)"
+    },
+    {
+      "espeak_symbol": "tː",
+      "ipa": "tː",
+      "ipa_alternates": [
+        "/tː/"
+      ],
+      "description": "Voiceless alveolar stop (long)"
+    },
+    {
+      "espeak_symbol": "t̪",
+      "ipa": "t̪",
+      "ipa_alternates": [
+        "/t̪/"
+      ],
+      "description": "Voiceless alveolar stop (dental)"
+    },
+    {
+      "espeak_symbol": "t̪ː",
+      "ipa": "t̪ː",
+      "ipa_alternates": [
+        "/t̪ː/"
+      ],
+      "description": "Voiceless alveolar stop (dental, long)"
+    },
+    {
+      "espeak_symbol": "u",
+      "ipa": "u",
+      "ipa_alternates": [
+        "/u/"
+      ],
+      "description": "Close back rounded vowel"
+    },
+    {
+      "espeak_symbol": "u\"",
+      "ipa": "y",
+      "ipa_alternates": [
+        "/y/"
+      ],
+      "description": "Close front rounded vowel",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review.",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "u.",
+      "ipa": "ɯ",
+      "ipa_alternates": [
+        "/ɯ/"
+      ],
+      "description": "Close back unrounded vowel",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "u.ː",
+      "ipa": "ɯː",
+      "ipa_alternates": [
+        "/ɯː/"
+      ],
+      "description": "Close back unrounded vowel (long)",
+      "espeak_holdout": true
+    },
+    {
+      "espeak_symbol": "u1",
+      "ipa": "u˥",
+      "ipa_alternates": [
+        "/u˥/"
+      ],
+      "description": "Close back rounded vowel + ˥"
+    },
+    {
+      "espeak_symbol": "u2",
+      "ipa": "u2",
+      "ipa_alternates": [
+        "/u2/"
+      ],
+      "description": "Close back rounded vowel (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "u4",
+      "ipa": "u4",
+      "ipa_alternates": [
+        "/u4/"
+      ],
+      "description": "Close back rounded vowel (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "u5",
+      "ipa": "u5",
+      "ipa_alternates": [
+        "/u5/"
+      ],
+      "description": "Close back rounded vowel (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "u:",
+      "ipa": "uː",
+      "ipa_alternates": [
+        "/uː/"
+      ],
+      "description": "Close back rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ua1",
+      "ipa": "ua˥",
+      "ipa_alternates": [
+        "/ua˥/"
+      ],
+      "description": "Close back rounded vowel + a + ˥"
+    },
+    {
+      "espeak_symbol": "ua2",
+      "ipa": "ua2",
+      "ipa_alternates": [
+        "/ua2/"
+      ],
+      "description": "Diphthong/triphthong (u + a) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "ua4",
+      "ipa": "ua4",
+      "ipa_alternates": [
+        "/ua4/"
+      ],
+      "description": "Diphthong/triphthong (u + a) (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "ua5",
+      "ipa": "ua5",
+      "ipa_alternates": [
+        "/ua5/"
+      ],
+      "description": "Diphthong/triphthong (u + a) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "uai5",
+      "ipa": "uai5",
+      "ipa_alternates": [
+        "/uai5/"
+      ],
+      "description": "Diphthong/triphthong (u + a + i) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "uaiɜ",
+      "ipa": "uaiɜ",
+      "ipa_alternates": [
+        "/uaiɜ/"
+      ],
+      "description": "Diphthong/triphthong (u + a + i) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "uaɜ",
+      "ipa": "uaɜ",
+      "ipa_alternates": [
+        "/uaɜ/"
+      ],
+      "description": "Diphthong/triphthong (u + a) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "uei2",
+      "ipa": "uei2",
+      "ipa_alternates": [
+        "/uei2/"
+      ],
+      "description": "Diphthong/triphthong (u + e + i) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "uei5",
+      "ipa": "uei5",
+      "ipa_alternates": [
+        "/uei5/"
+      ],
+      "description": "Diphthong/triphthong (u + e + i) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "ueiɜ",
+      "ipa": "ueiɜ",
+      "ipa_alternates": [
+        "/ueiɜ/"
+      ],
+      "description": "Diphthong/triphthong (u + e + i) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "ui",
+      "ipa": "ui",
+      "ipa_alternates": [
+        "/ui/"
+      ],
+      "description": "Diphthong/triphthong (u + i)"
+    },
+    {
+      "espeak_symbol": "uo",
+      "ipa": "uo",
+      "ipa_alternates": [
+        "/uo/"
+      ],
+      "description": "Diphthong/triphthong (u + o)"
+    },
+    {
+      "espeak_symbol": "uo1",
+      "ipa": "uo˥",
+      "ipa_alternates": [
+        "/uo˥/"
+      ],
+      "description": "Close back rounded vowel + o + ˥"
+    },
+    {
+      "espeak_symbol": "uo2",
+      "ipa": "uo2",
+      "ipa_alternates": [
+        "/uo2/"
+      ],
+      "description": "Diphthong/triphthong (u + o) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "uo5",
+      "ipa": "uo5",
+      "ipa_alternates": [
+        "/uo5/"
+      ],
+      "description": "Diphthong/triphthong (u + o) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "uoɜ",
+      "ipa": "uoɜ",
+      "ipa_alternates": [
+        "/uoɜ/"
+      ],
+      "description": "Diphthong/triphthong (u + o) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "uə2",
+      "ipa": "uə2",
+      "ipa_alternates": [
+        "/uə2/"
+      ],
+      "description": "Close back rounded vowel + ə (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "uə5",
+      "ipa": "uə5",
+      "ipa_alternates": [
+        "/uə5/"
+      ],
+      "description": "Close back rounded vowel + ə (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "uəɜ",
+      "ipa": "uəɜ",
+      "ipa_alternates": [
+        "/uəɜ/"
+      ],
+      "description": "Close back rounded vowel + ə (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "uɜ",
+      "ipa": "uɜ",
+      "ipa_alternates": [
+        "/uɜ/"
+      ],
+      "description": "Close back rounded vowel (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "uɨ",
+      "ipa": "uɨ",
+      "ipa_alternates": [
+        "/uɨ/"
+      ],
+      "description": "Diphthong/triphthong (u + ɨ)"
+    },
+    {
+      "espeak_symbol": "uɪ",
+      "ipa": "uɪ",
+      "ipa_alternates": [
+        "/uɪ/"
+      ],
+      "description": "Diphthong/triphthong (u + ɪ)"
+    },
+    {
+      "espeak_symbol": "uː",
+      "ipa": "uː",
+      "ipa_alternates": [
+        "/uː/"
+      ],
+      "description": "Close back rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ũ",
+      "ipa": "ũ",
+      "ipa_alternates": [
+        "/ũ/"
+      ],
+      "description": "Close back rounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "v",
+      "ipa": "v",
+      "ipa_alternates": [
+        "/v/"
+      ],
+      "description": "Voiced labiodental fricative"
+    },
+    {
+      "espeak_symbol": "vʲ",
+      "ipa": "vʲ",
+      "ipa_alternates": [
+        "/vʲ/"
+      ],
+      "description": "Voiced labiodental fricative (palatalised)"
+    },
+    {
+      "espeak_symbol": "w",
+      "ipa": "w",
+      "ipa_alternates": [
+        "/w/"
+      ],
+      "description": "Labio-velar approximant"
+    },
+    {
+      "espeak_symbol": "x",
+      "ipa": "x",
+      "ipa_alternates": [
+        "/x/"
+      ],
+      "description": "Voiceless velar fricative"
+    },
+    {
+      "espeak_symbol": "xʲ",
+      "ipa": "xʲ",
+      "ipa_alternates": [
+        "/xʲ/"
+      ],
+      "description": "Voiceless velar fricative (palatalised)"
+    },
+    {
+      "espeak_symbol": "y",
+      "ipa": "y",
+      "ipa_alternates": [
+        "/y/"
+      ],
+      "description": "Close front rounded vowel"
+    },
+    {
+      "espeak_symbol": "y1",
+      "ipa": "y˥",
+      "ipa_alternates": [
+        "/y˥/"
+      ],
+      "description": "Close front rounded vowel + ˥"
+    },
+    {
+      "espeak_symbol": "y2",
+      "ipa": "y2",
+      "ipa_alternates": [
+        "/y2/"
+      ],
+      "description": "Close front rounded vowel (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "y5",
+      "ipa": "y5",
+      "ipa_alternates": [
+        "/y5/"
+      ],
+      "description": "Close front rounded vowel (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "y:",
+      "ipa": "yː",
+      "ipa_alternates": [
+        "/yː/"
+      ],
+      "description": "Close front rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "yi",
+      "ipa": "yi",
+      "ipa_alternates": [
+        "/yi/"
+      ],
+      "description": "Diphthong/triphthong (y + i)"
+    },
+    {
+      "espeak_symbol": "yiɜ",
+      "ipa": "yiɜ",
+      "ipa_alternates": [
+        "/yiɜ/"
+      ],
+      "description": "Diphthong/triphthong (y + i) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "yu2",
+      "ipa": "yu2",
+      "ipa_alternates": [
+        "/yu2/"
+      ],
+      "description": "Diphthong/triphthong (y + u) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "yu5",
+      "ipa": "yu5",
+      "ipa_alternates": [
+        "/yu5/"
+      ],
+      "description": "Diphthong/triphthong (y + u) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "yuɜ",
+      "ipa": "yuɜ",
+      "ipa_alternates": [
+        "/yuɜ/"
+      ],
+      "description": "Diphthong/triphthong (y + u) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "yæ2",
+      "ipa": "yæ2",
+      "ipa_alternates": [
+        "/yæ2/"
+      ],
+      "description": "Diphthong/triphthong (y + æ) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "yæ5",
+      "ipa": "yæ5",
+      "ipa_alternates": [
+        "/yæ5/"
+      ],
+      "description": "Diphthong/triphthong (y + æ) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "yæɜ",
+      "ipa": "yæɜ",
+      "ipa_alternates": [
+        "/yæɜ/"
+      ],
+      "description": "Diphthong/triphthong (y + æ) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "yə2",
+      "ipa": "yə2",
+      "ipa_alternates": [
+        "/yə2/"
+      ],
+      "description": "Close front rounded vowel + ə (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "yə5",
+      "ipa": "yə5",
+      "ipa_alternates": [
+        "/yə5/"
+      ],
+      "description": "Close front rounded vowel + ə (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "yəɜ",
+      "ipa": "yəɜ",
+      "ipa_alternates": [
+        "/yəɜ/"
+      ],
+      "description": "Close front rounded vowel + ə (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "yɛ2",
+      "ipa": "yɛ2",
+      "ipa_alternates": [
+        "/yɛ2/"
+      ],
+      "description": "Diphthong/triphthong (y + ɛ) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "yɛ5",
+      "ipa": "yɛ5",
+      "ipa_alternates": [
+        "/yɛ5/"
+      ],
+      "description": "Diphthong/triphthong (y + ɛ) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "yɛ5ʲ",
+      "ipa": "yɛ5ʲ",
+      "ipa_alternates": [
+        "/yɛ5ʲ/"
+      ],
+      "description": "Close front rounded vowel + ɛ (palatalised)"
+    },
+    {
+      "espeak_symbol": "yɛɜ",
+      "ipa": "yɛɜ",
+      "ipa_alternates": [
+        "/yɛɜ/"
+      ],
+      "description": "Diphthong/triphthong (y + ɛ) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "yɜ",
+      "ipa": "yɜ",
+      "ipa_alternates": [
+        "/yɜ/"
+      ],
+      "description": "Close front rounded vowel (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "yː",
+      "ipa": "yː",
+      "ipa_alternates": [
+        "/yː/"
+      ],
+      "description": "Close front rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "z",
+      "ipa": "z",
+      "ipa_alternates": [
+        "/z/"
+      ],
+      "description": "Voiced alveolar fricative"
+    },
+    {
+      "espeak_symbol": "ä",
+      "ipa": "ä",
+      "ipa_alternates": [
+        "/ä/"
+      ],
+      "description": "Open central unrounded vowel (eSpeak rendering)"
+    },
+    {
+      "espeak_symbol": "ää",
+      "ipa": "ää",
+      "ipa_alternates": [
+        "/ää/"
+      ],
+      "description": "Open central unrounded vowel (eSpeak rendering) + ä"
+    },
+    {
+      "espeak_symbol": "æ",
+      "ipa": "æ",
+      "ipa_alternates": [
+        "/æ/"
+      ],
+      "description": "Near-open front unrounded vowel"
+    },
+    {
+      "espeak_symbol": "æi",
+      "ipa": "æi",
+      "ipa_alternates": [
+        "/æi/"
+      ],
+      "description": "Diphthong/triphthong (æ + i)"
+    },
+    {
+      "espeak_symbol": "æiː",
+      "ipa": "æiː",
+      "ipa_alternates": [
+        "/æiː/"
+      ],
+      "description": "Diphthong/triphthong (æ + i) (long)"
+    },
+    {
+      "espeak_symbol": "æː",
+      "ipa": "æː",
+      "ipa_alternates": [
+        "/æː/"
+      ],
+      "description": "Near-open front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ç",
+      "ipa": "ç",
+      "ipa_alternates": [
+        "/ç/"
+      ],
+      "description": "Voiceless palatal fricative"
+    },
+    {
+      "espeak_symbol": "ð",
+      "ipa": "ð",
+      "ipa_alternates": [
+        "/ð/"
+      ],
+      "description": "Voiced dental fricative"
+    },
+    {
+      "espeak_symbol": "ø",
+      "ipa": "ø",
+      "ipa_alternates": [
+        "/ø/"
+      ],
+      "description": "Close-mid front rounded vowel"
+    },
+    {
+      "espeak_symbol": "øi",
+      "ipa": "øi",
+      "ipa_alternates": [
+        "/øi/"
+      ],
+      "description": "Diphthong/triphthong (ø + i)"
+    },
+    {
+      "espeak_symbol": "øː",
+      "ipa": "øː",
+      "ipa_alternates": [
+        "/øː/"
+      ],
+      "description": "Close-mid front rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ħ",
+      "ipa": "ħ",
+      "ipa_alternates": [
+        "/ħ/"
+      ],
+      "description": "Voiceless pharyngeal fricative"
+    },
+    {
+      "espeak_symbol": "ŋ",
+      "ipa": "ŋ",
+      "ipa_alternates": [
+        "/ŋ/"
+      ],
+      "description": "Velar nasal"
+    },
+    {
+      "espeak_symbol": "œ",
+      "ipa": "œ",
+      "ipa_alternates": [
+        "/œ/"
+      ],
+      "description": "Open-mid front rounded vowel"
+    },
+    {
+      "espeak_symbol": "œː",
+      "ipa": "œː",
+      "ipa_alternates": [
+        "/œː/"
+      ],
+      "description": "Open-mid front rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "œ̃",
+      "ipa": "œ̃",
+      "ipa_alternates": [
+        "/œ̃/"
+      ],
+      "description": "Open-mid front rounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "ũ",
+      "ipa": "ũ",
+      "ipa_alternates": [
+        "/ũ/"
+      ],
+      "description": "Uncategorised symbol ('ũ')"
+    },
+    {
+      "espeak_symbol": "ɐ",
+      "ipa": "ɐ",
+      "ipa_alternates": [
+        "/ɐ/"
+      ],
+      "description": "Near-open central vowel"
+    },
+    {
+      "espeak_symbol": "ɐɐ",
+      "ipa": "ɐɐ",
+      "ipa_alternates": [
+        "/ɐɐ/"
+      ],
+      "description": "Diphthong/triphthong (ɐ + ɐ)"
+    },
+    {
+      "espeak_symbol": "ɐ̃",
+      "ipa": "ɐ̃",
+      "ipa_alternates": [
+        "/ɐ̃/"
+      ],
+      "description": "Near-open central vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "ɐ̃ʊ̃",
+      "ipa": "ɐ̃ʊ̃",
+      "ipa_alternates": [
+        "/ɐ̃ʊ̃/"
+      ],
+      "description": "Diphthong/triphthong (ɐ + ʊ) (nasalised)"
+    },
+    {
+      "espeak_symbol": "ɑ",
+      "ipa": "ɑ",
+      "ipa_alternates": [
+        "/ɑ/"
+      ],
+      "description": "Open back unrounded vowel"
+    },
+    {
+      "espeak_symbol": "ɑ1",
+      "ipa": "ɑ˥",
+      "ipa_alternates": [
+        "/ɑ˥/"
+      ],
+      "description": "Open back unrounded vowel + ˥"
+    },
+    {
+      "espeak_symbol": "ɑ2",
+      "ipa": "ɑ2",
+      "ipa_alternates": [
+        "/ɑ2/"
+      ],
+      "description": "Open back unrounded vowel (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "ɑ4",
+      "ipa": "ɑ4",
+      "ipa_alternates": [
+        "/ɑ4/"
+      ],
+      "description": "Open back unrounded vowel (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "ɑ5",
+      "ipa": "ɑ5",
+      "ipa_alternates": [
+        "/ɑ5/"
+      ],
+      "description": "Open back unrounded vowel (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "ɑ:",
+      "ipa": "ɑː",
+      "ipa_alternates": [
+        "/ɑː/"
+      ],
+      "description": "Open back unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ɑu2",
+      "ipa": "ɑu2",
+      "ipa_alternates": [
+        "/ɑu2/"
+      ],
+      "description": "Diphthong/triphthong (ɑ + u) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "ɑu5",
+      "ipa": "ɑu5",
+      "ipa_alternates": [
+        "/ɑu5/"
+      ],
+      "description": "Diphthong/triphthong (ɑ + u) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "ɑuɜ",
+      "ipa": "ɑuɜ",
+      "ipa_alternates": [
+        "/ɑuɜ/"
+      ],
+      "description": "Diphthong/triphthong (ɑ + u) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "ɑɜ",
+      "ipa": "ɑɜ",
+      "ipa_alternates": [
+        "/ɑɜ/"
+      ],
+      "description": "Open back unrounded vowel (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "ɑɨ",
+      "ipa": "ɑɨ",
+      "ipa_alternates": [
+        "/ɑɨ/"
+      ],
+      "description": "Diphthong/triphthong (ɑ + ɨ)"
+    },
+    {
+      "espeak_symbol": "ɑː",
+      "ipa": "ɑː",
+      "ipa_alternates": [
+        "/ɑː/"
+      ],
+      "description": "Open back unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ɑːɹ",
+      "ipa": "ɑːɹ",
+      "ipa_alternates": [
+        "/ɑːɹ/"
+      ],
+      "description": "Open back unrounded vowel + ɹ (long)"
+    },
+    {
+      "espeak_symbol": "ɑ̃",
+      "ipa": "ɑ̃",
+      "ipa_alternates": [
+        "/ɑ̃/"
+      ],
+      "description": "Open back unrounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "ɒ",
+      "ipa": "ɒ",
+      "ipa_alternates": [
+        "/ɒ/"
+      ],
+      "description": "Open back rounded vowel"
+    },
+    {
+      "espeak_symbol": "ɔ",
+      "ipa": "ɔ",
+      "ipa_alternates": [
+        "/ɔ/"
+      ],
+      "description": "Open-mid back rounded vowel"
+    },
+    {
+      "espeak_symbol": "ɔø",
+      "ipa": "ɔø",
+      "ipa_alternates": [
+        "/ɔø/"
+      ],
+      "description": "Diphthong/triphthong (ɔ + ø)"
+    },
+    {
+      "espeak_symbol": "ɔɨ",
+      "ipa": "ɔɨ",
+      "ipa_alternates": [
+        "/ɔɨ/"
+      ],
+      "description": "Diphthong/triphthong (ɔ + ɨ)"
+    },
+    {
+      "espeak_symbol": "ɔɪ",
+      "ipa": "ɔɪ",
+      "ipa_alternates": [
+        "/ɔɪ/"
+      ],
+      "description": "Diphthong/triphthong (ɔ + ɪ)"
+    },
+    {
+      "espeak_symbol": "ɔː",
+      "ipa": "ɔː",
+      "ipa_alternates": [
+        "/ɔː/"
+      ],
+      "description": "Open-mid back rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ɔːɹ",
+      "ipa": "ɔːɹ",
+      "ipa_alternates": [
+        "/ɔːɹ/"
+      ],
+      "description": "Open-mid back rounded vowel + ɹ (long)"
+    },
+    {
+      "espeak_symbol": "ɔ̃",
+      "ipa": "ɔ̃",
+      "ipa_alternates": [
+        "/ɔ̃/"
+      ],
+      "description": "Open-mid back rounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "ɕ",
+      "ipa": "ɕ",
+      "ipa_alternates": [
+        "/ɕ/"
+      ],
+      "description": "Voiceless alveolo-palatal fricative"
+    },
+    {
+      "espeak_symbol": "ɕʲ",
+      "ipa": "ɕʲ",
+      "ipa_alternates": [
+        "/ɕʲ/"
+      ],
+      "description": "Voiceless alveolo-palatal fricative (palatalised)"
+    },
+    {
+      "espeak_symbol": "ɖ",
+      "ipa": "ɖ",
+      "ipa_alternates": [
+        "/ɖ/"
+      ],
+      "description": "Voiced retroflex stop"
+    },
+    {
+      "espeak_symbol": "ɖʰ",
+      "ipa": "ɖʰ",
+      "ipa_alternates": [
+        "/ɖʰ/"
+      ],
+      "description": "Voiced retroflex stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "ə",
+      "ipa": "ə",
+      "ipa_alternates": [
+        "/ə/"
+      ],
+      "description": "Mid central vowel (schwa)"
+    },
+    {
+      "espeak_symbol": "ə1",
+      "ipa": "ə˥",
+      "ipa_alternates": [
+        "/ə˥/"
+      ],
+      "description": "Mid central vowel (schwa) + ˥"
+    },
+    {
+      "espeak_symbol": "ə2",
+      "ipa": "ə2",
+      "ipa_alternates": [
+        "/ə2/"
+      ],
+      "description": "Mid central vowel (schwa) (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "ə4",
+      "ipa": "ə4",
+      "ipa_alternates": [
+        "/ə4/"
+      ],
+      "description": "Mid central vowel (schwa) (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "ə5",
+      "ipa": "ə5",
+      "ipa_alternates": [
+        "/ə5/"
+      ],
+      "description": "Mid central vowel (schwa) (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "əl",
+      "ipa": "əl",
+      "ipa_alternates": [
+        "/əl/"
+      ],
+      "description": "Mid central vowel (schwa) + l"
+    },
+    {
+      "espeak_symbol": "ər1",
+      "ipa": "ər˥",
+      "ipa_alternates": [
+        "/ər˥/"
+      ],
+      "description": "Mid central vowel (schwa) + r + ˥"
+    },
+    {
+      "espeak_symbol": "ər2",
+      "ipa": "ər2",
+      "ipa_alternates": [
+        "/ər2/"
+      ],
+      "description": "Mid central vowel (schwa) + r (tone 2 (rising))"
+    },
+    {
+      "espeak_symbol": "ər4",
+      "ipa": "ər4",
+      "ipa_alternates": [
+        "/ər4/"
+      ],
+      "description": "Mid central vowel (schwa) + r (tone 4 (falling))"
+    },
+    {
+      "espeak_symbol": "ər5",
+      "ipa": "ər5",
+      "ipa_alternates": [
+        "/ər5/"
+      ],
+      "description": "Mid central vowel (schwa) + r (tone 5 (neutral))"
+    },
+    {
+      "espeak_symbol": "ərɜ",
+      "ipa": "ərɜ",
+      "ipa_alternates": [
+        "/ərɜ/"
+      ],
+      "description": "Mid central vowel (schwa) + r (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "əɜ",
+      "ipa": "əɜ",
+      "ipa_alternates": [
+        "/əɜ/"
+      ],
+      "description": "Mid central vowel (schwa) (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "əɨ",
+      "ipa": "əɨ",
+      "ipa_alternates": [
+        "/əɨ/"
+      ],
+      "description": "Mid central vowel (schwa) + ɨ"
+    },
+    {
+      "espeak_symbol": "əɪ",
+      "ipa": "əɪ",
+      "ipa_alternates": [
+        "/əɪ/"
+      ],
+      "description": "Mid central vowel (schwa) + ɪ"
+    },
+    {
+      "espeak_symbol": "əʊ",
+      "ipa": "əʊ",
+      "ipa_alternates": [
+        "/əʊ/"
+      ],
+      "description": "Mid central vowel (schwa) + ʊ"
+    },
+    {
+      "espeak_symbol": "əː1",
+      "ipa": "əː˥",
+      "ipa_alternates": [
+        "/əː˥/"
+      ],
+      "description": "Mid central vowel (schwa) + ˥ (long)"
+    },
+    {
+      "espeak_symbol": "ɚ",
+      "ipa": "ɚ",
+      "ipa_alternates": [
+        "/ɚ/"
+      ],
+      "description": "Rhotacised schwa"
+    },
+    {
+      "espeak_symbol": "ɛ",
+      "ipa": "ɛ",
+      "ipa_alternates": [
+        "/ɛ/"
+      ],
+      "description": "Open-mid front unrounded vowel"
+    },
+    {
+      "espeak_symbol": "ɛɪ",
+      "ipa": "ɛɪ",
+      "ipa_alternates": [
+        "/ɛɪ/"
+      ],
+      "description": "Diphthong/triphthong (ɛ + ɪ)"
+    },
+    {
+      "espeak_symbol": "ɛɹ",
+      "ipa": "ɛɹ",
+      "ipa_alternates": [
+        "/ɛɹ/"
+      ],
+      "description": "Open-mid front unrounded vowel + ɹ"
+    },
+    {
+      "espeak_symbol": "ɛʊ",
+      "ipa": "ɛʊ",
+      "ipa_alternates": [
+        "/ɛʊ/"
+      ],
+      "description": "Diphthong/triphthong (ɛ + ʊ)"
+    },
+    {
+      "espeak_symbol": "ɛː",
+      "ipa": "ɛː",
+      "ipa_alternates": [
+        "/ɛː/"
+      ],
+      "description": "Open-mid front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ɛ̃",
+      "ipa": "ɛ̃",
+      "ipa_alternates": [
+        "/ɛ̃/"
+      ],
+      "description": "Open-mid front unrounded vowel (nasalised)"
+    },
+    {
+      "espeak_symbol": "ɜ",
+      "ipa": "ɜ",
+      "ipa_alternates": [
+        "/ɜ/"
+      ],
+      "description": "Uncategorised symbol ('ɜ') (tone 3 (eSpeak ɜ marker))"
+    },
+    {
+      "espeak_symbol": "ɜː",
+      "ipa": "ɜː",
+      "ipa_alternates": [
+        "/ɜː/"
+      ],
+      "description": "Open-mid central unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ɟ",
+      "ipa": "ɟ",
+      "ipa_alternates": [
+        "/ɟ/"
+      ],
+      "description": "Voiced palatal stop"
+    },
+    {
+      "espeak_symbol": "ɟʰ",
+      "ipa": "ɟʰ",
+      "ipa_alternates": [
+        "/ɟʰ/"
+      ],
+      "description": "Voiced palatal stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "ɟː",
+      "ipa": "ɟː",
+      "ipa_alternates": [
+        "/ɟː/"
+      ],
+      "description": "Voiced palatal stop (long)"
+    },
+    {
+      "espeak_symbol": "ɡ",
+      "ipa": "ɡ",
+      "ipa_alternates": [
+        "/ɡ/"
+      ],
+      "description": "Voiced velar stop"
+    },
+    {
+      "espeak_symbol": "ɡʰ",
+      "ipa": "ɡʰ",
+      "ipa_alternates": [
+        "/ɡʰ/"
+      ],
+      "description": "Voiced velar stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "ɡʲ",
+      "ipa": "ɡʲ",
+      "ipa_alternates": [
+        "/ɡʲ/"
+      ],
+      "description": "Voiced velar stop (palatalised)"
+    },
+    {
+      "espeak_symbol": "ɡː",
+      "ipa": "ɡː",
+      "ipa_alternates": [
+        "/ɡː/"
+      ],
+      "description": "Voiced velar stop (long)"
+    },
+    {
+      "espeak_symbol": "ɣ",
+      "ipa": "ɣ",
+      "ipa_alternates": [
+        "/ɣ/"
+      ],
+      "description": "Voiced velar fricative"
+    },
+    {
+      "espeak_symbol": "ɨ",
+      "ipa": "ɨ",
+      "ipa_alternates": [
+        "/ɨ/"
+      ],
+      "description": "Close central unrounded vowel"
+    },
+    {
+      "espeak_symbol": "ɨu",
+      "ipa": "ɨu",
+      "ipa_alternates": [
+        "/ɨu/"
+      ],
+      "description": "Diphthong/triphthong (ɨ + u)"
+    },
+    {
+      "espeak_symbol": "ɨː",
+      "ipa": "ɨː",
+      "ipa_alternates": [
+        "/ɨː/"
+      ],
+      "description": "Close central unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ɪ",
+      "ipa": "ɪ",
+      "ipa_alternates": [
+        "/ɪ/"
+      ],
+      "description": "Near-close near-front unrounded vowel"
+    },
+    {
+      "espeak_symbol": "ɪ^",
+      "ipa": "ɪ^",
+      "ipa_alternates": [
+        "/ɪ^/"
+      ],
+      "description": "Near-close near-front unrounded vowel"
+    },
+    {
+      "espeak_symbol": "ɪu",
+      "ipa": "ɪu",
+      "ipa_alternates": [
+        "/ɪu/"
+      ],
+      "description": "Diphthong/triphthong (ɪ + u)"
+    },
+    {
+      "espeak_symbol": "ɪuː",
+      "ipa": "ɪuː",
+      "ipa_alternates": [
+        "/ɪuː/"
+      ],
+      "description": "Diphthong/triphthong (ɪ + u) (long)"
+    },
+    {
+      "espeak_symbol": "ɪɹ",
+      "ipa": "ɪɹ",
+      "ipa_alternates": [
+        "/ɪɹ/"
+      ],
+      "description": "Near-close near-front unrounded vowel + ɹ"
+    },
+    {
+      "espeak_symbol": "ɪː",
+      "ipa": "ɪː",
+      "ipa_alternates": [
+        "/ɪː/"
+      ],
+      "description": "Near-close near-front unrounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ɫ",
+      "ipa": "ɫ",
+      "ipa_alternates": [
+        "/ɫ/"
+      ],
+      "description": "Velarised alveolar lateral"
+    },
+    {
+      "espeak_symbol": "ɬ",
+      "ipa": "ɬ",
+      "ipa_alternates": [
+        "/ɬ/"
+      ],
+      "description": "Voiceless alveolar lateral fricative"
+    },
+    {
+      "espeak_symbol": "ɭ",
+      "ipa": "ɭ",
+      "ipa_alternates": [
+        "/ɭ/"
+      ],
+      "description": "Retroflex lateral"
+    },
+    {
+      "espeak_symbol": "ɭʲ",
+      "ipa": "ɭʲ",
+      "ipa_alternates": [
+        "/ɭʲ/"
+      ],
+      "description": "Retroflex lateral (palatalised)"
+    },
+    {
+      "espeak_symbol": "ɯ",
+      "ipa": "ɯ",
+      "ipa_alternates": [
+        "/ɯ/"
+      ],
+      "description": "Close back unrounded vowel"
+    },
+    {
+      "espeak_symbol": "ɯɯ",
+      "ipa": "ɯɯ",
+      "ipa_alternates": [
+        "/ɯɯ/"
+      ],
+      "description": "Diphthong/triphthong (ɯ + ɯ)"
+    },
+    {
+      "espeak_symbol": "ɯᵝ",
+      "ipa": "ɯᵝ",
+      "ipa_alternates": [
+        "/ɯᵝ/"
+      ],
+      "description": "Close back unrounded vowel (compressed lips)"
+    },
+    {
+      "espeak_symbol": "ɯᵝɯᵝ",
+      "ipa": "ɯᵝɯᵝ",
+      "ipa_alternates": [
+        "/ɯᵝɯᵝ/"
+      ],
+      "description": "Diphthong/triphthong (ɯ + ɯ) (compressed lips)"
+    },
+    {
+      "espeak_symbol": "ɲ",
+      "ipa": "ɲ",
+      "ipa_alternates": [
+        "/ɲ/"
+      ],
+      "description": "Palatal nasal"
+    },
+    {
+      "espeak_symbol": "ɳ",
+      "ipa": "ɳ",
+      "ipa_alternates": [
+        "/ɳ/"
+      ],
+      "description": "Retroflex nasal"
+    },
+    {
+      "espeak_symbol": "ɴ",
+      "ipa": "ɴ",
+      "ipa_alternates": [
+        "/ɴ/"
+      ],
+      "description": "Uvular nasal"
+    },
+    {
+      "espeak_symbol": "ɵ",
+      "ipa": "ɵ",
+      "ipa_alternates": [
+        "/ɵ/"
+      ],
+      "description": "Close-mid central rounded vowel"
+    },
+    {
+      "espeak_symbol": "ɵː",
+      "ipa": "ɵː",
+      "ipa_alternates": [
+        "/ɵː/"
+      ],
+      "description": "Close-mid central rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ɸ",
+      "ipa": "ɸ",
+      "ipa_alternates": [
+        "/ɸ/"
+      ],
+      "description": "Voiceless bilabial fricative"
+    },
+    {
+      "espeak_symbol": "ɹ",
+      "ipa": "ɹ",
+      "ipa_alternates": [
+        "/ɹ/"
+      ],
+      "description": "Alveolar approximant"
+    },
+    {
+      "espeak_symbol": "ɻ",
+      "ipa": "ɻ",
+      "ipa_alternates": [
+        "/ɻ/"
+      ],
+      "description": "Retroflex approximant"
+    },
+    {
+      "espeak_symbol": "ɽ",
+      "ipa": "ɽ",
+      "ipa_alternates": [
+        "/ɽ/"
+      ],
+      "description": "Retroflex flap"
+    },
+    {
+      "espeak_symbol": "ɾ",
+      "ipa": "ɾ",
+      "ipa_alternates": [
+        "/ɾ/"
+      ],
+      "description": "Alveolar tap"
+    },
+    {
+      "espeak_symbol": "ʁ",
+      "ipa": "ʁ",
+      "ipa_alternates": [
+        "/ʁ/"
+      ],
+      "description": "Voiced uvular fricative"
+    },
+    {
+      "espeak_symbol": "ʂ",
+      "ipa": "ʂ",
+      "ipa_alternates": [
+        "/ʂ/"
+      ],
+      "description": "Voiceless retroflex fricative"
+    },
+    {
+      "espeak_symbol": "ʂʲ",
+      "ipa": "ʂʲ",
+      "ipa_alternates": [
+        "/ʂʲ/"
+      ],
+      "description": "Voiceless retroflex fricative (palatalised)"
+    },
+    {
+      "espeak_symbol": "ʃ",
+      "ipa": "ʃ",
+      "ipa_alternates": [
+        "/ʃ/"
+      ],
+      "description": "Voiceless postalveolar fricative"
+    },
+    {
+      "espeak_symbol": "ʈ",
+      "ipa": "ʈ",
+      "ipa_alternates": [
+        "/ʈ/"
+      ],
+      "description": "Voiceless retroflex stop"
+    },
+    {
+      "espeak_symbol": "ʈʰ",
+      "ipa": "ʈʰ",
+      "ipa_alternates": [
+        "/ʈʰ/"
+      ],
+      "description": "Voiceless retroflex stop (aspirated)"
+    },
+    {
+      "espeak_symbol": "ʉ",
+      "ipa": "ʉ",
+      "ipa_alternates": [
+        "/ʉ/"
+      ],
+      "description": "Close central rounded vowel"
+    },
+    {
+      "espeak_symbol": "ʊ",
+      "ipa": "ʊ",
+      "ipa_alternates": [
+        "/ʊ/"
+      ],
+      "description": "Near-close near-back rounded vowel"
+    },
+    {
+      "espeak_symbol": "ʊə",
+      "ipa": "ʊə",
+      "ipa_alternates": [
+        "/ʊə/"
+      ],
+      "description": "Near-close near-back rounded vowel + ə"
+    },
+    {
+      "espeak_symbol": "ʊɹ",
+      "ipa": "ʊɹ",
+      "ipa_alternates": [
+        "/ʊɹ/"
+      ],
+      "description": "Near-close near-back rounded vowel + ɹ"
+    },
+    {
+      "espeak_symbol": "ʊː",
+      "ipa": "ʊː",
+      "ipa_alternates": [
+        "/ʊː/"
+      ],
+      "description": "Near-close near-back rounded vowel (long)"
+    },
+    {
+      "espeak_symbol": "ʋ",
+      "ipa": "ʋ",
+      "ipa_alternates": [
+        "/ʋ/"
+      ],
+      "description": "Labiodental approximant"
+    },
+    {
+      "espeak_symbol": "ʌ",
+      "ipa": "ʌ",
+      "ipa_alternates": [
+        "/ʌ/"
+      ],
+      "description": "Open-mid back unrounded vowel"
+    },
+    {
+      "espeak_symbol": "ʎ",
+      "ipa": "ʎ",
+      "ipa_alternates": [
+        "/ʎ/"
+      ],
+      "description": "Palatal lateral"
+    },
+    {
+      "espeak_symbol": "ʐ",
+      "ipa": "ʐ",
+      "ipa_alternates": [
+        "/ʐ/"
+      ],
+      "description": "Voiced retroflex fricative"
+    },
+    {
+      "espeak_symbol": "ʑ",
+      "ipa": "ʑ",
+      "ipa_alternates": [
+        "/ʑ/"
+      ],
+      "description": "Voiced alveolo-palatal fricative"
+    },
+    {
+      "espeak_symbol": "ʒ",
+      "ipa": "ʒ",
+      "ipa_alternates": [
+        "/ʒ/"
+      ],
+      "description": "Voiced postalveolar fricative"
+    },
+    {
+      "espeak_symbol": "ʒʲ",
+      "ipa": "ʒʲ",
+      "ipa_alternates": [
+        "/ʒʲ/"
+      ],
+      "description": "Voiced postalveolar fricative (palatalised)"
+    },
+    {
+      "espeak_symbol": "ʔ",
+      "ipa": "ʔ",
+      "ipa_alternates": [
+        "/ʔ/"
+      ],
+      "description": "Glottal stop"
+    },
+    {
+      "espeak_symbol": "ʕ",
+      "ipa": "ʕ",
+      "ipa_alternates": [
+        "/ʕ/"
+      ],
+      "description": "Voiced pharyngeal fricative"
+    },
+    {
+      "espeak_symbol": "ʝ",
+      "ipa": "ʝ",
+      "ipa_alternates": [
+        "/ʝ/"
+      ],
+      "description": "Voiced palatal fricative"
+    },
+    {
+      "espeak_symbol": "ʲ",
+      "ipa": "ʲ",
+      "ipa_alternates": [
+        "/ʲ/"
+      ],
+      "description": "Palatalisation diacritic (palatalised)",
+      "uncertain": true,
+      "note": "Mapping is the most likely interpretation but is not empirically confirmed against the model's emissions. Flagged for human review."
+    },
+    {
+      "espeak_symbol": "β",
+      "ipa": "β",
+      "ipa_alternates": [
+        "/β/"
+      ],
+      "description": "Voiced bilabial fricative"
+    },
+    {
+      "espeak_symbol": "θ",
+      "ipa": "θ",
+      "ipa_alternates": [
+        "/θ/"
+      ],
+      "description": "Voiceless dental fricative"
+    },
+    {
+      "espeak_symbol": "χ",
+      "ipa": "χ",
+      "ipa_alternates": [
+        "/χ/"
+      ],
+      "description": "Voiceless uvular fricative"
+    },
+    {
+      "espeak_symbol": "ᵻ",
+      "ipa": "ᵻ",
+      "ipa_alternates": [
+        "/ᵻ/"
+      ],
+      "description": "Near-close central unrounded vowel (Wells)"
+    }
+  ]
+}

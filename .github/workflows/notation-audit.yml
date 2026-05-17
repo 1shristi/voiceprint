@@ -1,0 +1,42 @@
+name: Notation Audit
+
+# Loop 3a Phase 0: non-blocking documentation-update reminder.
+# Fires when phoneme detection logic or the alphabet itself changes — at
+# that point the alphabet may be out of date with what the model emits, so
+# we re-run the vocab-derived audit and compare to the committed JSON. A
+# mismatch is treated as a reminder ("re-run scripts/notation_audit.py
+# audit"), not as a blocking failure.
+
+on:
+  push:
+    paths:
+      - 'app/services/phonemes.py'
+      - 'app/data/phoneme_alphabet.json'
+      - 'app/data/_l1_phonemes_snapshot.txt'
+      - 'scripts/notation_audit.py'
+      - '.github/workflows/notation-audit.yml'
+  pull_request:
+    paths:
+      - 'app/services/phonemes.py'
+      - 'app/data/phoneme_alphabet.json'
+      - 'app/data/_l1_phonemes_snapshot.txt'
+      - 'scripts/notation_audit.py'
+      - '.github/workflows/notation-audit.yml'
+
+jobs:
+  audit:
+    name: Verify phoneme alphabet is up to date
+    runs-on: ubuntu-latest
+    # Non-blocking: a stale alphabet should remind the author to re-run
+    # scripts/notation_audit.py audit, not block the merge.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install audit dependencies
+        # Only the tokenizer is needed — no torch, no model weights.
+        run: pip install 'transformers>=4.45'
+      - name: Run notation audit --check
+        run: python scripts/notation_audit.py check

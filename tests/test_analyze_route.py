@@ -58,3 +58,15 @@ def test_analyze_short_clip_warns_in_notes() -> None:
     assert res.status_code == 200, res.text
     notes = res.json()["notes"]
     assert any("short" in n.lower() for n in notes)
+
+
+def test_analyze_response_advertises_phoneme_alphabet_version() -> None:
+    """Loop 3a Phase 0: every response advertises the IPA-mapping version."""
+    client = TestClient(app)
+    res = client.post(
+        "/analyze",
+        json={"audio_base64": _sine_wav_b64(220.0, 1.0), "format": "wav"},
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()
+    assert body["phoneme_alphabet_version"] == "1.0.0"
