@@ -21,7 +21,10 @@ RUN pip install --upgrade pip
 # Install CPU-only torch first to avoid pulling ~1.5 GB of CUDA libraries we
 # don't use. Must come before the regular `pip install .` so torchaudio's
 # version resolution sees the CPU torch already in place.
-RUN pip install --no-cache-dir \
+# --retries/--timeout: torch's deps (filelock, jinja2, etc.) come from PyPI's
+# Fastly CDN, which has been TCP-RST'ing connections from Depot builders.
+# Higher retry budget gives transient flakes more chance to clear.
+RUN pip install --no-cache-dir --retries 20 --timeout 60 \
     --index-url https://download.pytorch.org/whl/cpu \
     torch torchaudio
 RUN pip install --no-cache-dir .
