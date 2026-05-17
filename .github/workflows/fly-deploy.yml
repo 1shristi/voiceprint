@@ -13,6 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      # --local-only builds the image on the GitHub runner (which has Docker
+      # pre-installed) and pushes it directly to Fly's registry. We use this
+      # instead of --remote-only because Fly's remote Depot builder has been
+      # unable to reach files.pythonhosted.org (Fastly CDN) — every TCP
+      # connection RST'd within ms — making it impossible to pip-install
+      # torch's deps. GH runners reach Fastly fine, so the build works there.
+      - run: flyctl deploy --local-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
