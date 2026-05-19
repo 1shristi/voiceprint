@@ -36,6 +36,29 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid API key")
 
 
+class TranscriptInputModel(BaseModel):
+    """Loop 3a Phase 1: optional known transcript the audio should be aligned against.
+
+    The two `expected_language` fields in the request (top-level for stretch-phoneme
+    probe scoring, this one nested for orthography→IPA conversion) are deliberately
+    independent — see the spec §5.2 warning. Do not collapse them.
+    """
+
+    format: str = Field(
+        ...,
+        description="Transcript notation: 'ipa', 'espeak', or 'orthography_with_dictionary'.",
+    )
+    content: str = Field(..., description="Transcript text in the declared format.")
+    expected_language: str | None = Field(
+        default=None,
+        description=(
+            "Locale hint for orthography→IPA conversion (e.g. 'en', 'zh', 'ar'). "
+            "Ignored for format='ipa' and format='espeak'. Distinct from the "
+            "top-level expected_language, which weights stretch-phoneme probe scoring."
+        ),
+    )
+
+
 class AnalyzeRequest(BaseModel):
     audio_base64: str = Field(..., description="Base64-encoded audio (webm or wav).")
     format: str = Field(default="webm", description="Audio container format: 'webm' or 'wav'.")
@@ -53,6 +76,14 @@ class AnalyzeRequest(BaseModel):
     claimed_language: str | None = Field(
         default=None,
         description="Language the speaker is claimed to be speaking fluently on this clip. Triggers a language-match check against curated marker phonemes.",
+    )
+    transcript: TranscriptInputModel | None = Field(
+        default=None,
+        description=(
+            "Optional known transcript of the clip. When provided, voiceprint runs "
+            "CTC forced alignment over the same Wav2Vec2 logits and returns "
+            "per-position evidence in the `aligned_phonemes` response block."
+        ),
     )
 
 
@@ -103,6 +134,38 @@ class LanguageMatchBlock(BaseModel):
     notes: list[str] = Field(default_factory=list)
 
 
+class AlignedTop3Block(BaseModel):
+    phoneme: str
+    prob: float
+
+
+class AlignedPositionBlock(BaseModel):
+    target_phoneme: str
+    target_index_in_transcript: int
+    start_ms: int
+    end_ms: int
+    avg_log_prob: float
+    top1_predicted: str
+    top3_alternatives: list[AlignedTop3Block] = Field(default_factory=list)
+    match_classification: str  # "produced" | "near_miss" | "absent"
+
+
+class AlignedSummaryBlock(BaseModel):
+    expected_count: int
+    produced_count: int
+    near_miss_count: int
+    absent_count: int
+    evidence_strength: str  # "strong" | "moderate" | "weak"
+
+
+class AlignedPhonemesBlock(BaseModel):
+    transcript_format: str
+    alignment_quality: str  # "high" | "medium" | "low"
+    positions: list[AlignedPositionBlock] = Field(default_factory=list)
+    summary_by_phoneme: dict[str, AlignedSummaryBlock] = Field(default_factory=dict)
+    alignment_warnings: list[str] = Field(default_factory=list)
+
+
 class VotMeasurementBlock(BaseModel):
     phoneme: str
     time_s: float
@@ -126,6 +189,9 @@ class AnalyzeResponse(BaseModel):
     phonemes: PhonemesBlock = Field(default_factory=PhonemesBlock)
     stretch_phonemes: StretchPhonemesBlock | None = None
     language_match: LanguageMatchBlock | None = None
+    # Loop 3a Phase 1: per-position evidence when the caller supplied a transcript.
+    # Absent (null) when no transcript was provided — legacy behaviour unchanged.
+    aligned_phonemes: AlignedPhonemesBlock | None = None
     # Loop 3a Phase 0: the IPA-mapping version this response was generated against.
     # See app/data/phoneme_alphabet.json. Consumers can use this to validate that
     # their phoneme consumption logic matches voiceprint's current alphabet.
@@ -139,12 +205,23 @@ class AnalyzeResponse(BaseModel):
     dependencies=[Depends(require_api_key)],
 )
 def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
+    transcript_input = None
+    if req.transcript is not None:
+        from app.services.alignment import TranscriptInput
+
+        transcript_input = TranscriptInput(
+            format=req.transcript.format,
+            content=req.transcript.content,
+            expected_language=req.transcript.expected_language,
+        )
+
     try:
         features = extractor.extract_all(
             req.audio_base64,
             req.format,
             expected_language=req.expected_language,
             claimed_language=req.claimed_language,
+            transcript=transcript_input,
         )
     except extractor.AudioDecodeError as e:
         raise HTTPException(
@@ -222,6 +299,41 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                 notes=features.language_match.notes,
             )
             if features.language_match is not None
+            else None
+        ),
+        aligned_phonemes=(
+            AlignedPhonemesBlock(
+                transcript_format=features.aligned_phonemes.transcript_format,
+                alignment_quality=features.aligned_phonemes.alignment_quality,
+                positions=[
+                    AlignedPositionBlock(
+                        target_phoneme=p.target_phoneme,
+                        target_index_in_transcript=p.target_index_in_transcript,
+                        start_ms=p.start_ms,
+                        end_ms=p.end_ms,
+                        avg_log_prob=p.avg_log_prob,
+                        top1_predicted=p.top1_predicted,
+                        top3_alternatives=[
+                            AlignedTop3Block(phoneme=a.phoneme, prob=a.prob)
+                            for a in p.top3_alternatives
+                        ],
+                        match_classification=p.match_classification,
+                    )
+                    for p in features.aligned_phonemes.positions
+                ],
+                summary_by_phoneme={
+                    k: AlignedSummaryBlock(
+                        expected_count=v.expected_count,
+                        produced_count=v.produced_count,
+                        near_miss_count=v.near_miss_count,
+                        absent_count=v.absent_count,
+                        evidence_strength=v.evidence_strength,
+                    )
+                    for k, v in features.aligned_phonemes.summary_by_phoneme.items()
+                },
+                alignment_warnings=list(features.aligned_phonemes.alignment_warnings),
+            )
+            if features.aligned_phonemes is not None
             else None
         ),
         notes=features.notes,

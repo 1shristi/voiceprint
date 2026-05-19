@@ -9,9 +9,13 @@ import subprocess
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import parselmouth
+
+if TYPE_CHECKING:
+    from app.services.alignment import TranscriptInput
 
 
 class AudioDecodeError(Exception):
@@ -80,6 +84,42 @@ class LanguageMatchOut:
 
 
 @dataclass
+class AlignedTop3Out:
+    phoneme: str
+    prob: float
+
+
+@dataclass
+class AlignedPositionOut:
+    target_phoneme: str
+    target_index_in_transcript: int
+    start_ms: int
+    end_ms: int
+    avg_log_prob: float
+    top1_predicted: str
+    top3_alternatives: list[AlignedTop3Out]
+    match_classification: str
+
+
+@dataclass
+class AlignedSummaryOut:
+    expected_count: int
+    produced_count: int
+    near_miss_count: int
+    absent_count: int
+    evidence_strength: str
+
+
+@dataclass
+class AlignedPhonemesOut:
+    transcript_format: str
+    alignment_quality: str
+    positions: list[AlignedPositionOut]
+    summary_by_phoneme: dict[str, AlignedSummaryOut]
+    alignment_warnings: list[str]
+
+
+@dataclass
 class FeatureSet:
     duration_s: float
     f0: F0Result
@@ -93,6 +133,7 @@ class FeatureSet:
     phoneme_total_tokens: int
     stretch_score: StretchScoreOut | None
     language_match: LanguageMatchOut | None
+    aligned_phonemes: AlignedPhonemesOut | None
     notes: list[str]
 
 
@@ -294,6 +335,7 @@ def extract_all(
     include_phonemes: bool = True,
     expected_language: str | None = None,
     claimed_language: str | None = None,
+    transcript: "TranscriptInput | None" = None,
 ) -> FeatureSet:
     sound = decode_audio(audio_b64, fmt)
     notes: list[str] = []
@@ -314,11 +356,16 @@ def extract_all(
     phoneme_occurrences: list = []
     stretch_out: StretchScoreOut | None = None
     language_match_out: LanguageMatchOut | None = None
+    aligned_phonemes_out: AlignedPhonemesOut | None = None
     if include_phonemes:
         try:
             from app.services import phonemes
 
-            inv = phonemes.extract_phonemes(sound, expected_language=expected_language)
+            inv = phonemes.extract_phonemes(
+                sound,
+                expected_language=expected_language,
+                include_alignment_artifacts=transcript is not None,
+            )
             phoneme_counts = inv.counts
             phoneme_total = inv.total_tokens
             phoneme_occurrences = inv.occurrences
@@ -358,6 +405,56 @@ def extract_all(
                         )
                 except Exception as e:  # noqa: BLE001 — language match failures are non-fatal
                     notes.append(f"language match unavailable: {type(e).__name__}")
+
+            if transcript is not None and inv.alignment_artifacts is not None:
+                try:
+                    from app.services import alignment as alignment_service
+
+                    result = alignment_service.align_against_transcript(
+                        inv.alignment_artifacts.log_probs,
+                        blank_id=inv.alignment_artifacts.blank_id,
+                        vocab=inv.alignment_artifacts.vocab,
+                        audio_duration_s=inv.alignment_artifacts.audio_duration_s,
+                        transcript=transcript,
+                    )
+                    aligned_phonemes_out = AlignedPhonemesOut(
+                        transcript_format=result.transcript_format,
+                        alignment_quality=result.alignment_quality,
+                        positions=[
+                            AlignedPositionOut(
+                                target_phoneme=p.target_phoneme,
+                                target_index_in_transcript=p.target_index_in_transcript,
+                                start_ms=p.start_ms,
+                                end_ms=p.end_ms,
+                                avg_log_prob=p.avg_log_prob,
+                                top1_predicted=p.top1_predicted,
+                                top3_alternatives=[
+                                    AlignedTop3Out(phoneme=a.phoneme, prob=a.prob)
+                                    for a in p.top3_alternatives
+                                ],
+                                match_classification=p.match_classification,
+                            )
+                            for p in result.positions
+                        ],
+                        summary_by_phoneme={
+                            k: AlignedSummaryOut(
+                                expected_count=v.expected_count,
+                                produced_count=v.produced_count,
+                                near_miss_count=v.near_miss_count,
+                                absent_count=v.absent_count,
+                                evidence_strength=v.evidence_strength,
+                            )
+                            for k, v in result.summary_by_phoneme.items()
+                        },
+                        alignment_warnings=list(result.alignment_warnings),
+                    )
+                except Exception as e:  # noqa: BLE001 — alignment failures are non-fatal
+                    notes.append(f"forced alignment unavailable: {type(e).__name__}")
+            elif transcript is not None and inv.alignment_artifacts is None:
+                # Phoneme model disabled (e.g. VOICEPRINT_DISABLE_PHONEMES=1) but
+                # a transcript was supplied. Surface a note so the caller knows
+                # alignment didn't run; don't fail the request.
+                notes.append("transcript supplied but phoneme model is disabled; alignment skipped")
         except Exception as e:  # noqa: BLE001 — phoneme failures are non-fatal
             notes.append(f"phoneme detection unavailable: {type(e).__name__}")
 
@@ -399,5 +496,6 @@ def extract_all(
         phoneme_total_tokens=phoneme_total,
         stretch_score=stretch_out,
         language_match=language_match_out,
+        aligned_phonemes=aligned_phonemes_out,
         notes=notes,
     )
