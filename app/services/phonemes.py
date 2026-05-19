@@ -96,12 +96,33 @@ class StretchScore:
 
 
 @dataclass
+class AlignmentArtifacts:
+    """Frame-level model output reusable by forced-alignment.
+
+    Captured during phoneme extraction so callers that want both free-decoded
+    counts and CTC alignment against a known transcript don't pay the model
+    forward pass twice. `log_probs` is shape (T, V); `vocab` maps tokenizer
+    symbols → vocab index; `blank_id` is the CTC blank token's vocab index.
+    `audio_duration_s` lets consumers convert frame indices back to ms.
+    """
+
+    log_probs: object  # torch.Tensor (T, V) — typed object to avoid torch import here
+    blank_id: int
+    vocab: dict[str, int]
+    audio_duration_s: float
+
+
+@dataclass
 class PhonemeInventory:
     """Per-phoneme count plus chronological occurrences of each emitted token."""
     counts: dict[str, int]
     total_tokens: int
     occurrences: list[PhonemeOccurrence]
     stretch_score: StretchScore | None = None
+    # Populated only when `extract_phonemes(..., include_alignment_artifacts=True)`.
+    # Held here (rather than returned as a tuple) so the existing call sites stay
+    # source-compatible and alignment-aware callers can opt in.
+    alignment_artifacts: AlignmentArtifacts | None = None
 
     def status(self, phoneme: str, *, present_threshold: int = 2) -> str:
         """Classify a single phoneme as 'present' / 'approximate' / 'absent'."""
@@ -312,12 +333,18 @@ def extract_phonemes(
     sound: parselmouth.Sound,
     *,
     expected_language: str | None = None,
+    include_alignment_artifacts: bool = False,
 ) -> PhonemeInventory:
     """Run the audio through Wav2Vec2-Phoneme and tally phoneme counts + timed occurrences.
 
     When `expected_language` is provided and matches a known stretch language
     (mandarin, arabic), the returned inventory also carries a `stretch_score`
     scoring user-produced tokens against the per-language probe set.
+
+    When `include_alignment_artifacts=True`, the returned inventory also carries
+    `alignment_artifacts` — log-softmaxed frame-level model output plus tokenizer
+    metadata — for callers (Loop 3a Phase 1 forced alignment) that want to reuse
+    the same forward pass for CTC alignment against a known transcript.
     """
     if os.getenv("VOICEPRINT_DISABLE_PHONEMES") == "1":
         return PhonemeInventory(counts={}, total_tokens=0, occurrences=[])
@@ -355,4 +382,16 @@ def extract_phonemes(
     )
     if expected_language:
         inv.stretch_score = score_stretch(inv, expected_language)
+    if include_alignment_artifacts:
+        # log_softmax across the vocab axis once here; forced_align expects
+        # log-probabilities, not raw logits. Strip the batch dim so the
+        # artifacts surface as (T, V) — single-clip is the only shape Loop 3a
+        # callers ever produce.
+        log_probs = torch.log_softmax(logits[0], dim=-1)
+        inv.alignment_artifacts = AlignmentArtifacts(
+            log_probs=log_probs,
+            blank_id=int(blank_id),
+            vocab=dict(_processor.tokenizer.get_vocab()),
+            audio_duration_s=audio_duration_s,
+        )
     return inv

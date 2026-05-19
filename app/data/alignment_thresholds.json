@@ -1,0 +1,26 @@
+{
+  "_source": "Loop 3a Phase 1 — initial thresholds for CTC forced-alignment match classification, drawn from the spec's recommended values.",
+  "_audited_at": "2026-05-19",
+  "_provenance_status": "hand_curated_pending_empirical_validation",
+  "_caveats": [
+    "Thresholds are starting estimates. Tune against the test corpus once Loop 3b begins emitting alignment evidence on real diagnostic/stretch clips.",
+    "avg_log_prob is computed in nats (natural log of softmax probability), matching torchaudio.functional.forced_align's output convention.",
+    "produced/near_miss/absent are mutually exclusive; every aligned position lands in exactly one class.",
+    "evidence_strength ratios use ceil(expected_count * ratio) so single-occurrence phonemes are still classifiable."
+  ],
+  "version": "1.0.0",
+  "thresholds": {
+    "produced_min_avg_log_prob": -1.5,
+    "near_miss_min_top3_prob": 0.15,
+    "absent_max_top3_prob": 0.05
+  },
+  "evidence_strength_ratios": {
+    "strong_min_produced_ratio": 0.5,
+    "moderate_min_produced_plus_near_miss_ratio": 0.5
+  },
+  "alignment_quality_thresholds": {
+    "_note": "alignment_quality summarises the average per-frame avg_log_prob across all aligned positions. Tighter than per-position thresholds because it averages across many positions.",
+    "high_min_avg_log_prob": -1.0,
+    "medium_min_avg_log_prob": -2.5
+  }
+}
