@@ -1,0 +1,241 @@
+{
+  "_source": "Hand-curated from published Wav2Vec2-Phoneme behaviour and well-documented L2 substitution patterns. Confusion targets are drawn from linguamatch's L1_PHONEMES table (the phonemes linguamatch most cares about classifying correctly) plus voiceprint's PROBE_SETS stretch phonemes (Mandarin retroflexes/affricates, Arabic pharyngeals/emphatics/uvulars).",
+  "_audited_at": "2026-05-19",
+  "_provenance_status": "hand_curated_pending_empirical_validation",
+  "_caveats": [
+    "Weights are conservative starting estimates from descriptive linguistics literature and the canonical L2-acquisition substitution sets. They have NOT been validated against a labelled audio corpus.",
+    "References cited generically as 'common L2 substitution' or 'visually similar place of articulation' are well-documented patterns in phonetics textbooks (e.g. Ladefoged & Maddieson 1996, 'The Sounds of the World's Languages'); per spec §6.1 that's acceptable provenance.",
+    "Targets and near-miss symbols are written in canonical IPA. The smoothing service normalises Wav2Vec2's eSpeak-style vocabulary back to IPA via phoneme_alphabet.json before applying these weights.",
+    "Future work (Loop 4+ or a Loop 3 hotfix): validate weights against labelled audio. The most likely calibration adjustment is downweighting place-of-articulation confusions (Wav2Vec2 generally distinguishes manner better than place) and upweighting manner confusions on affricates."
+  ],
+  "version": "1.0.0",
+  "confusions": {
+    "θ": {
+      "near_misses": [
+        { "from_symbol": "s", "weight": 0.4, "source": "Common Wav2Vec2 confusion; dental->alveolar fricative is the canonical L2 English substitution for non-thorn-bearing L1s (French, German, Russian, Mandarin, Japanese, etc.)." },
+        { "from_symbol": "f", "weight": 0.3, "source": "Common Wav2Vec2 confusion; same voiceless-fricative manner with shifted place (dental->labiodental). Documented substitution in many L2 inventories." },
+        { "from_symbol": "t", "weight": 0.15, "source": "Stopping of /th/ documented in some Indian English varieties." }
+      ]
+    },
+    "ð": {
+      "near_misses": [
+        { "from_symbol": "d", "weight": 0.4, "source": "Common Wav2Vec2 confusion; dental->alveolar voiced. Most common L2 substitution alongside /th/->/s/." },
+        { "from_symbol": "v", "weight": 0.3, "source": "Common Wav2Vec2 confusion; voiced labiodental as a near-equivalent. Typical for L1s without dental fricatives." },
+        { "from_symbol": "z", "weight": 0.15, "source": "Voiced sibilant substitution; documented in some L1s." }
+      ]
+    },
+    "ɹ": {
+      "near_misses": [
+        { "from_symbol": "w", "weight": 0.3, "source": "Rhotic->approximant confusion. Common in Japanese L1; Wav2Vec2 often confuses /ɹ/ and /w/ when the speaker doesn't fully retroflex." },
+        { "from_symbol": "ɾ", "weight": 0.25, "source": "Tap substitution for English approximant /ɹ/. Spanish/Italian/Polish L1s often produce a tap when reading English r." },
+        { "from_symbol": "l", "weight": 0.15, "source": "Liquid confusion; documented in some East Asian L1s (e.g. Japanese r/l merger)." }
+      ]
+    },
+    "v": {
+      "near_misses": [
+        { "from_symbol": "b", "weight": 0.25, "source": "Voiced labiodental->voiced bilabial. Spanish and several other L1s lack /v/ and substitute /b/ (or the bilabial approximant)." },
+        { "from_symbol": "w", "weight": 0.2, "source": "Approximant substitution for /v/. Common in some Indian English varieties." }
+      ]
+    },
+    "w": {
+      "near_misses": [
+        { "from_symbol": "v", "weight": 0.2, "source": "Voicing-place confusion. Common in German, Russian, and Polish L1s where /v/ is the labiodental phoneme used in place of English /w/." }
+      ]
+    },
+    "ŋ": {
+      "near_misses": [
+        { "from_symbol": "n", "weight": 0.25, "source": "Velar->alveolar nasal confusion. Common in word-final position for many L1s; Wav2Vec2 sometimes drops the velar cue." }
+      ]
+    },
+    "tʃ": {
+      "near_misses": [
+        { "from_symbol": "ʃ", "weight": 0.3, "source": "Affricate->fricative confusion. Wav2Vec2 frequently misses the closure burst, especially in fast speech." },
+        { "from_symbol": "t", "weight": 0.2, "source": "Closure-only realisation. The model picks up the stop and misses the fricative release." },
+        { "from_symbol": "ʈʂ", "weight": 0.15, "source": "Postalveolar->retroflex affricate confusion; documented in Mandarin L1 speakers reading English." }
+      ]
+    },
+    "dʒ": {
+      "near_misses": [
+        { "from_symbol": "ʒ", "weight": 0.3, "source": "Affricate->fricative confusion. Mirror image of /tʃ/->/ʃ/." },
+        { "from_symbol": "d", "weight": 0.2, "source": "Closure-only realisation; mirror of /tʃ/->/t/." },
+        { "from_symbol": "j", "weight": 0.15, "source": "Affricate->approximant in some L1s (e.g. Spanish reading English orthographic 'j')." }
+      ]
+    },
+    "tɕ": {
+      "near_misses": [
+        { "from_symbol": "tʃ", "weight": 0.35, "source": "Alveolo-palatal->postalveolar affricate. Wav2Vec2 routinely conflates these two on Mandarin and Polish audio." },
+        { "from_symbol": "ʃ", "weight": 0.2, "source": "Affricate->fricative within the alveolo-palatal/postalveolar family." }
+      ]
+    },
+    "dʑ": {
+      "near_misses": [
+        { "from_symbol": "dʒ", "weight": 0.35, "source": "Voiced mirror of /tɕ/->/tʃ/ confusion. Mandarin and Polish L1s." },
+        { "from_symbol": "ʒ", "weight": 0.2, "source": "Affricate->fricative voiced." }
+      ]
+    },
+    "tɕʰ": {
+      "near_misses": [
+        { "from_symbol": "tʃ", "weight": 0.35, "source": "Aspirated alveolo-palatal often emitted as plain postalveolar by the model. Mandarin pinyin q is the canonical example." },
+        { "from_symbol": "tɕ", "weight": 0.3, "source": "Aspiration mark dropped; Wav2Vec2 can miss the aspiration cue at low SNR." },
+        { "from_symbol": "tsʰ", "weight": 0.15, "source": "Affricate place confusion (alveolo-palatal->alveolar) with aspiration preserved." }
+      ]
+    },
+    "ts": {
+      "near_misses": [
+        { "from_symbol": "s", "weight": 0.25, "source": "Affricate->fricative; closure burst missed. Documented for German, Russian, Mandarin L1s." },
+        { "from_symbol": "t", "weight": 0.15, "source": "Closure-only realisation; mirror of /tʃ/->/t/." }
+      ]
+    },
+    "tsʰ": {
+      "near_misses": [
+        { "from_symbol": "ts", "weight": 0.35, "source": "Aspiration dropped; common across all aspirated obstruents under low-energy conditions." },
+        { "from_symbol": "s", "weight": 0.2, "source": "Affricate->fricative + aspiration; combined manner+release confusion." }
+      ]
+    },
+    "ʈʂ": {
+      "near_misses": [
+        { "from_symbol": "tʃ", "weight": 0.4, "source": "Retroflex->postalveolar; the most common L2 English substitution for Mandarin zh." },
+        { "from_symbol": "ʂ", "weight": 0.2, "source": "Affricate->fricative within the retroflex series." },
+        { "from_symbol": "ts", "weight": 0.15, "source": "Retroflex affricate->alveolar affricate when retroflex cue is missed." }
+      ]
+    },
+    "ɖʐ": {
+      "near_misses": [
+        { "from_symbol": "dʒ", "weight": 0.4, "source": "Voiced mirror of /ʈʂ/->/tʃ/; Mandarin zh-voiced equivalent." },
+        { "from_symbol": "ʐ", "weight": 0.2, "source": "Affricate->fricative voiced retroflex." }
+      ]
+    },
+    "ʂ": {
+      "near_misses": [
+        { "from_symbol": "ʃ", "weight": 0.35, "source": "Retroflex->postalveolar fricative; Mandarin sh -> English sh." },
+        { "from_symbol": "s", "weight": 0.15, "source": "Retroflex->alveolar when retroflex cue is missed." }
+      ]
+    },
+    "ʐ": {
+      "near_misses": [
+        { "from_symbol": "ʒ", "weight": 0.35, "source": "Voiced mirror of /ʂ/->/ʃ/." },
+        { "from_symbol": "z", "weight": 0.15, "source": "Retroflex->alveolar voiced." }
+      ]
+    },
+    "ɻ": {
+      "near_misses": [
+        { "from_symbol": "ɹ", "weight": 0.3, "source": "Retroflex approximant->postalveolar approximant; Mandarin r often produced like English r." },
+        { "from_symbol": "l", "weight": 0.15, "source": "Liquid confusion in some L1s." }
+      ]
+    },
+    "ʈ": {
+      "near_misses": [
+        { "from_symbol": "t", "weight": 0.3, "source": "Retroflex->alveolar stop. Hindi/Urdu/Pashto retroflex T heard as English t by Wav2Vec2." },
+        { "from_symbol": "tʰ", "weight": 0.15, "source": "Retroflex->aspirated alveolar; some Indic-language speakers aspirate the retroflex stop." }
+      ]
+    },
+    "ɖ": {
+      "near_misses": [
+        { "from_symbol": "d", "weight": 0.3, "source": "Voiced mirror of /ʈ/->/t/; Hindi retroflex D heard as English d." }
+      ]
+    },
+    "ʕ": {
+      "near_misses": [
+        { "from_symbol": "ʔ", "weight": 0.3, "source": "Pharyngeal->glottal confusion. L2 speakers reading Arabic ayn often produce a glottal stop; Wav2Vec2 follows the same pattern." },
+        { "from_symbol": "h", "weight": 0.2, "source": "Voiceless approximation when pharyngeal voicing is lost." },
+        { "from_symbol": "ɣ", "weight": 0.1, "source": "Pharyngeal->velar voiced fricative confusion; documented in some Arabic dialects." }
+      ]
+    },
+    "ħ": {
+      "near_misses": [
+        { "from_symbol": "h", "weight": 0.4, "source": "Pharyngeal->glottal fricative. Most common L2 substitution for Arabic ḥa." },
+        { "from_symbol": "x", "weight": 0.3, "source": "Pharyngeal->velar fricative; Wav2Vec2 confuses pharyngeal and velar fricatives routinely." }
+      ]
+    },
+    "q": {
+      "near_misses": [
+        { "from_symbol": "k", "weight": 0.4, "source": "Uvular->velar confusion; the canonical L2 substitution for Arabic/Hebrew/Persian qaf." },
+        { "from_symbol": "ʔ", "weight": 0.2, "source": "Some Arabic dialects (Egyptian, Levantine urban) realise /q/ as glottal stop." }
+      ]
+    },
+    "tˤ": {
+      "near_misses": [
+        { "from_symbol": "t", "weight": 0.4, "source": "Emphatic->plain coronal stop; the canonical L2 substitution for Arabic emphatic T. Voiceprint vocab has no emphatic-t entry, so direct counts are always zero — smoothed evidence is the only signal." },
+        { "from_symbol": "t̪", "weight": 0.2, "source": "Emphatic->dental plain stop; a finer-grained alternative substitution." }
+      ]
+    },
+    "sˤ": {
+      "near_misses": [
+        { "from_symbol": "s", "weight": 0.4, "source": "Emphatic->plain alveolar fricative. Same emphasis-dropping pattern as /tˤ/->/t/." }
+      ]
+    },
+    "dˤ": {
+      "near_misses": [
+        { "from_symbol": "d", "weight": 0.4, "source": "Emphatic->plain voiced alveolar stop. Mirror of /tˤ/->/t/." }
+      ]
+    },
+    "ðˤ": {
+      "near_misses": [
+        { "from_symbol": "ð", "weight": 0.35, "source": "Emphatic->plain voiced dental fricative." },
+        { "from_symbol": "z", "weight": 0.15, "source": "Some dialects merge emphatic /ðˤ/ with /z/." }
+      ]
+    },
+    "x": {
+      "near_misses": [
+        { "from_symbol": "k", "weight": 0.3, "source": "Velar fricative->velar stop. German/Spanish/Russian L1 reading Arabic kh sometimes hits the stop instead of the continuant." },
+        { "from_symbol": "h", "weight": 0.2, "source": "Velar->glottal fricative; Wav2Vec2 confuses these on weak velar friction." }
+      ]
+    },
+    "χ": {
+      "near_misses": [
+        { "from_symbol": "x", "weight": 0.4, "source": "Uvular->velar fricative; the two are often phonetically very close and Wav2Vec2 conflates them." },
+        { "from_symbol": "ħ", "weight": 0.2, "source": "Uvular->pharyngeal voiceless fricative; minimal-pair distinction often lost." }
+      ]
+    },
+    "ɣ": {
+      "near_misses": [
+        { "from_symbol": "g", "weight": 0.25, "source": "Voiced velar fricative->voiced velar stop. Common when fricative voicing weakens to closure." },
+        { "from_symbol": "ʁ", "weight": 0.2, "source": "Velar->uvular voiced fricative; complementary to /χ/->/x/." }
+      ]
+    },
+    "ʁ": {
+      "near_misses": [
+        { "from_symbol": "ɣ", "weight": 0.25, "source": "Uvular->velar voiced fricative; phonetic neighbours often confused." },
+        { "from_symbol": "r", "weight": 0.2, "source": "Uvular->alveolar trill; the French/German r vs Spanish/Italian r dichotomy is sometimes flattened by Wav2Vec2." }
+      ]
+    },
+    "r": {
+      "near_misses": [
+        { "from_symbol": "ɾ", "weight": 0.3, "source": "Trill->tap; Spanish-style alternation. Wav2Vec2 picks the tap when the trill has fewer than 2 closures." },
+        { "from_symbol": "ɹ", "weight": 0.15, "source": "Trill->English approximant; L1 English speakers reading languages with trills." }
+      ]
+    },
+    "ɾ": {
+      "near_misses": [
+        { "from_symbol": "r", "weight": 0.25, "source": "Tap->trill; a vigorous tap may be misclassified as a short trill." },
+        { "from_symbol": "d", "weight": 0.15, "source": "Tap->alveolar stop; documented in some Spanish L1 speakers reading English." }
+      ]
+    },
+    "ɪ": {
+      "near_misses": [
+        { "from_symbol": "i", "weight": 0.25, "source": "Lax->tense high front vowel. L1s without the tense/lax distinction (Spanish, Italian, etc.) merge /ɪ/ with /i/." }
+      ]
+    },
+    "ʊ": {
+      "near_misses": [
+        { "from_symbol": "u", "weight": 0.25, "source": "Lax->tense high back vowel. Same merger pattern as /ɪ/->/i/." }
+      ]
+    },
+    "ə": {
+      "near_misses": [
+        { "from_symbol": "ʌ", "weight": 0.2, "source": "Schwa->open-mid back; for L1s without true schwa, Wav2Vec2 sometimes assigns the open-mid back vowel." }
+      ]
+    },
+    "æ": {
+      "near_misses": [
+        { "from_symbol": "ɛ", "weight": 0.25, "source": "Near-open->open-mid front vowel. Common L2 substitution for English /æ/." },
+        { "from_symbol": "a", "weight": 0.2, "source": "Near-open->open front; some L1s collapse /æ/ into the cardinal /a/." }
+      ]
+    },
+    "ɛ": {
+      "near_misses": [
+        { "from_symbol": "e", "weight": 0.2, "source": "Open-mid->close-mid; minimal-pair confusion in L1s with only one front mid vowel." }
+      ]
+    }
+  }
+}

@@ -120,6 +120,22 @@ class AlignedPhonemesOut:
 
 
 @dataclass
+class ConfusionContributionOut:
+    from_symbol: str
+    raw_count: int
+    weight: float
+    contribution: float
+
+
+@dataclass
+class ConfusionEvidenceOut:
+    raw_count: int
+    smoothed_count: float
+    evidence_from: list[ConfusionContributionOut]
+    interpretation: str
+
+
+@dataclass
 class FeatureSet:
     duration_s: float
     f0: F0Result
@@ -131,6 +147,11 @@ class FeatureSet:
     vot_measurements: list[VotMeasurementOut]
     phoneme_counts: dict[str, int]
     phoneme_total_tokens: int
+    # Loop 3a Phase 2 — confusion-smoothed counts and per-target audit trail.
+    # Computed on every /analyze call where the phoneme model is enabled. Empty
+    # when the phoneme model is disabled (tests) or the clip emitted no symbols.
+    phoneme_smoothed_counts: dict[str, float]
+    phoneme_confusion_evidence: dict[str, ConfusionEvidenceOut]
     stretch_score: StretchScoreOut | None
     language_match: LanguageMatchOut | None
     aligned_phonemes: AlignedPhonemesOut | None
@@ -354,6 +375,8 @@ def extract_all(
     phoneme_counts: dict[str, int] = {}
     phoneme_total = 0
     phoneme_occurrences: list = []
+    phoneme_smoothed_counts: dict[str, float] = {}
+    phoneme_confusion_evidence: dict[str, ConfusionEvidenceOut] = {}
     stretch_out: StretchScoreOut | None = None
     language_match_out: LanguageMatchOut | None = None
     aligned_phonemes_out: AlignedPhonemesOut | None = None
@@ -369,6 +392,37 @@ def extract_all(
             phoneme_counts = inv.counts
             phoneme_total = inv.total_tokens
             phoneme_occurrences = inv.occurrences
+
+            # Loop 3a Phase 2 — compute confusion-smoothed counts on every call
+            # where free decoding produced something. Failures are non-fatal:
+            # raw counts already populated above, so a smoothing error just
+            # leaves smoothed_counts/confusion_evidence empty and a note.
+            if phoneme_counts:
+                try:
+                    from app.services import smoothing
+
+                    smoothing_result = smoothing.compute_smoothed_counts(phoneme_counts)
+                    phoneme_smoothed_counts = smoothing_result.smoothed_counts
+                    phoneme_confusion_evidence = {
+                        target: ConfusionEvidenceOut(
+                            raw_count=ev.raw_count,
+                            smoothed_count=ev.smoothed_count,
+                            evidence_from=[
+                                ConfusionContributionOut(
+                                    from_symbol=c.from_symbol,
+                                    raw_count=c.raw_count,
+                                    weight=c.weight,
+                                    contribution=c.contribution,
+                                )
+                                for c in ev.evidence_from
+                            ],
+                            interpretation=ev.interpretation,
+                        )
+                        for target, ev in smoothing_result.confusion_evidence.items()
+                    }
+                except Exception as e:  # noqa: BLE001 — smoothing failures are non-fatal
+                    notes.append(f"confusion smoothing unavailable: {type(e).__name__}")
+
             if inv.stretch_score is not None:
                 stretch_out = StretchScoreOut(
                     expected_language=inv.stretch_score.expected_language,
@@ -494,6 +548,8 @@ def extract_all(
         vot_measurements=vot_measurements_out,
         phoneme_counts=phoneme_counts,
         phoneme_total_tokens=phoneme_total,
+        phoneme_smoothed_counts=phoneme_smoothed_counts,
+        phoneme_confusion_evidence=phoneme_confusion_evidence,
         stretch_score=stretch_out,
         language_match=language_match_out,
         aligned_phonemes=aligned_phonemes_out,
