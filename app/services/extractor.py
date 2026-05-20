@@ -120,6 +120,26 @@ class AlignedPhonemesOut:
 
 
 @dataclass
+class CalibratedBaselineOut:
+    source_clip: str
+    window_start_ms: int
+    window_end_ms: int
+    f0_mean_hz: float | None
+    f0_std_semitones: float | None
+    syllable_rate_hz: float | None
+    notes: str
+
+
+@dataclass
+class QualityOut:
+    snr_db: float | None
+    clipping_pct: float | None
+    calibrated_baseline: CalibratedBaselineOut | None
+    snr_note: str | None
+    notes: list[str]
+
+
+@dataclass
 class ConfusionContributionOut:
     from_symbol: str
     raw_count: int
@@ -155,6 +175,7 @@ class FeatureSet:
     stretch_score: StretchScoreOut | None
     language_match: LanguageMatchOut | None
     aligned_phonemes: AlignedPhonemesOut | None
+    quality: QualityOut
     notes: list[str]
 
 
@@ -357,6 +378,7 @@ def extract_all(
     expected_language: str | None = None,
     claimed_language: str | None = None,
     transcript: "TranscriptInput | None" = None,
+    clip_purpose: str | None = None,
 ) -> FeatureSet:
     sound = decode_audio(audio_b64, fmt)
     notes: list[str] = []
@@ -371,6 +393,41 @@ def extract_all(
 
     formants = extract_formants(sound)
     syllable_rate = estimate_syllable_rate(sound)
+
+    # Loop 3a Phase 3: clip-quality block. Independent of phoneme/transcript path.
+    # Every measurement is best-effort; a failure here never crashes the response.
+    try:
+        from app.services import quality as quality_service
+
+        quality_result = quality_service.extract_quality(sound, clip_purpose)
+        quality_out = QualityOut(
+            snr_db=quality_result.snr_db,
+            clipping_pct=quality_result.clipping_pct,
+            calibrated_baseline=(
+                CalibratedBaselineOut(
+                    source_clip=quality_result.calibrated_baseline.source_clip,
+                    window_start_ms=quality_result.calibrated_baseline.window_start_ms,
+                    window_end_ms=quality_result.calibrated_baseline.window_end_ms,
+                    f0_mean_hz=quality_result.calibrated_baseline.f0_mean_hz,
+                    f0_std_semitones=quality_result.calibrated_baseline.f0_std_semitones,
+                    syllable_rate_hz=quality_result.calibrated_baseline.syllable_rate_hz,
+                    notes=quality_result.calibrated_baseline.notes,
+                )
+                if quality_result.calibrated_baseline is not None
+                else None
+            ),
+            snr_note=quality_result.snr_note,
+            notes=list(quality_result.notes),
+        )
+    except Exception as e:  # noqa: BLE001 — quality block failures are non-fatal
+        notes.append(f"quality measurement unavailable: {type(e).__name__}")
+        quality_out = QualityOut(
+            snr_db=None,
+            clipping_pct=None,
+            calibrated_baseline=None,
+            snr_note=None,
+            notes=[],
+        )
 
     phoneme_counts: dict[str, int] = {}
     phoneme_total = 0
@@ -553,5 +610,6 @@ def extract_all(
         stretch_score=stretch_out,
         language_match=language_match_out,
         aligned_phonemes=aligned_phonemes_out,
+        quality=quality_out,
         notes=notes,
     )

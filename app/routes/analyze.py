@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+from typing import Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel, Field
@@ -83,6 +84,20 @@ class AnalyzeRequest(BaseModel):
             "Optional known transcript of the clip. When provided, voiceprint runs "
             "CTC forced alignment over the same Wav2Vec2 logits and returns "
             "per-position evidence in the `aligned_phonemes` response block."
+        ),
+    )
+    # Loop 3a Phase 3 (spec §7.3): explicit label for which clip type this call
+    # is processing. Echoed verbatim into `quality.calibrated_baseline.source_clip`.
+    # When absent or "other", source_clip becomes "unspecified". Voiceprint never
+    # infers clip type from duration/content — callers know which is which.
+    clip_purpose: Literal[
+        "diagnostic", "stretch", "counting", "free_speech", "other"
+    ] | None = Field(
+        default=None,
+        description=(
+            "Optional explicit label for clip type. Echoed verbatim into "
+            "quality.calibrated_baseline.source_clip; 'unspecified' when absent "
+            "or 'other'. Never inferred from clip properties."
         ),
     )
 
@@ -190,6 +205,24 @@ class AlignedPhonemesBlock(BaseModel):
     alignment_warnings: list[str] = Field(default_factory=list)
 
 
+class CalibratedBaselineBlock(BaseModel):
+    source_clip: str  # "diagnostic" | "stretch" | "counting" | "free_speech" | "unspecified"
+    window_start_ms: int
+    window_end_ms: int
+    f0_mean_hz: float | None = None
+    f0_std_semitones: float | None = None
+    syllable_rate_hz: float | None = None
+    notes: str
+
+
+class QualityBlock(BaseModel):
+    snr_db: float | None = None
+    snr_note: str | None = None
+    clipping_pct: float | None = None
+    calibrated_baseline: CalibratedBaselineBlock | None = None
+    notes: list[str] = Field(default_factory=list)
+
+
 class VotMeasurementBlock(BaseModel):
     phoneme: str
     time_s: float
@@ -216,6 +249,10 @@ class AnalyzeResponse(BaseModel):
     # Loop 3a Phase 1: per-position evidence when the caller supplied a transcript.
     # Absent (null) when no transcript was provided — legacy behaviour unchanged.
     aligned_phonemes: AlignedPhonemesBlock | None = None
+    # Loop 3a Phase 3: clip-quality block. Always present; individual fields are
+    # nullable when not computable. Includes SNR, clipping %, and a within-session
+    # baseline (first 5s) for downstream normalisation.
+    quality: QualityBlock = Field(default_factory=QualityBlock)
     # Loop 3a Phase 0: the IPA-mapping version this response was generated against.
     # See app/data/phoneme_alphabet.json. Consumers can use this to validate that
     # their phoneme consumption logic matches voiceprint's current alphabet.
@@ -246,6 +283,7 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             expected_language=req.expected_language,
             claimed_language=req.claimed_language,
             transcript=transcript_input,
+            clip_purpose=req.clip_purpose,
         )
     except extractor.AudioDecodeError as e:
         raise HTTPException(
@@ -342,6 +380,25 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             )
             if features.language_match is not None
             else None
+        ),
+        quality=QualityBlock(
+            snr_db=features.quality.snr_db,
+            snr_note=features.quality.snr_note,
+            clipping_pct=features.quality.clipping_pct,
+            calibrated_baseline=(
+                CalibratedBaselineBlock(
+                    source_clip=features.quality.calibrated_baseline.source_clip,
+                    window_start_ms=features.quality.calibrated_baseline.window_start_ms,
+                    window_end_ms=features.quality.calibrated_baseline.window_end_ms,
+                    f0_mean_hz=features.quality.calibrated_baseline.f0_mean_hz,
+                    f0_std_semitones=features.quality.calibrated_baseline.f0_std_semitones,
+                    syllable_rate_hz=features.quality.calibrated_baseline.syllable_rate_hz,
+                    notes=features.quality.calibrated_baseline.notes,
+                )
+                if features.quality.calibrated_baseline is not None
+                else None
+            ),
+            notes=list(features.quality.notes),
         ),
         aligned_phonemes=(
             AlignedPhonemesBlock(

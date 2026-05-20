@@ -123,6 +123,96 @@ def test_analyze_transcript_input_validation_rejects_missing_format() -> None:
     assert res.status_code == 422, res.text
 
 
+def test_analyze_response_always_includes_quality_block() -> None:
+    """Loop 3a Phase 3: every /analyze response carries a quality block."""
+    client = TestClient(app)
+    res = client.post(
+        "/analyze",
+        json={"audio_base64": _sine_wav_b64(220.0, 1.0), "format": "wav"},
+    )
+    assert res.status_code == 200, res.text
+    quality = res.json()["quality"]
+    assert "snr_db" in quality
+    assert "clipping_pct" in quality
+    assert "calibrated_baseline" in quality
+    assert "notes" in quality
+
+
+def test_analyze_short_clip_emits_baseline_too_short_note_in_quality() -> None:
+    """<5s clip → calibrated_baseline is null + 'too short' note."""
+    client = TestClient(app)
+    res = client.post(
+        "/analyze",
+        json={"audio_base64": _sine_wav_b64(220.0, 1.0), "format": "wav"},
+    )
+    body = res.json()
+    assert body["quality"]["calibrated_baseline"] is None
+    assert any("too short" in n.lower() for n in body["quality"]["notes"])
+
+
+def test_analyze_long_clip_with_clip_purpose_labels_source_clip() -> None:
+    """clip_purpose passes through verbatim to quality.calibrated_baseline.source_clip."""
+    client = TestClient(app)
+    res = client.post(
+        "/analyze",
+        json={
+            "audio_base64": _sine_wav_b64(220.0, 6.0),
+            "format": "wav",
+            "clip_purpose": "diagnostic",
+        },
+    )
+    assert res.status_code == 200, res.text
+    baseline = res.json()["quality"]["calibrated_baseline"]
+    assert baseline is not None
+    assert baseline["source_clip"] == "diagnostic"
+    assert baseline["window_start_ms"] == 0
+    assert baseline["window_end_ms"] == 5000
+
+
+def test_analyze_without_clip_purpose_reports_unspecified() -> None:
+    """No clip_purpose → source_clip is 'unspecified' (never inferred)."""
+    client = TestClient(app)
+    res = client.post(
+        "/analyze",
+        json={"audio_base64": _sine_wav_b64(220.0, 6.0), "format": "wav"},
+    )
+    assert res.status_code == 200, res.text
+    baseline = res.json()["quality"]["calibrated_baseline"]
+    assert baseline is not None
+    assert baseline["source_clip"] == "unspecified"
+
+
+def test_analyze_with_clip_purpose_other_reports_unspecified() -> None:
+    """clip_purpose='other' resolves to 'unspecified' per spec §7.3."""
+    client = TestClient(app)
+    res = client.post(
+        "/analyze",
+        json={
+            "audio_base64": _sine_wav_b64(220.0, 6.0),
+            "format": "wav",
+            "clip_purpose": "other",
+        },
+    )
+    assert res.status_code == 200, res.text
+    baseline = res.json()["quality"]["calibrated_baseline"]
+    assert baseline is not None
+    assert baseline["source_clip"] == "unspecified"
+
+
+def test_analyze_rejects_invalid_clip_purpose() -> None:
+    """Pydantic enforces the clip_purpose enum at the request boundary."""
+    client = TestClient(app)
+    res = client.post(
+        "/analyze",
+        json={
+            "audio_base64": _sine_wav_b64(220.0, 6.0),
+            "format": "wav",
+            "clip_purpose": "ad-hoc-monologue",
+        },
+    )
+    assert res.status_code == 422, res.text
+
+
 def test_analyze_with_transcript_populates_aligned_phonemes_when_artifacts_available(
     monkeypatch,
 ) -> None:
