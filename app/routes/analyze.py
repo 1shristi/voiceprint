@@ -103,9 +103,33 @@ class FormantsBlock(BaseModel):
     f3_mean_hz: float | None = None
 
 
+class ConfusionContributionBlock(BaseModel):
+    from_symbol: str
+    raw_count: int
+    weight: float
+    contribution: float
+
+
+class ConfusionEvidenceBlock(BaseModel):
+    raw_count: int
+    smoothed_count: float
+    evidence_from: list[ConfusionContributionBlock] = Field(default_factory=list)
+    interpretation: str = ""
+
+
 class PhonemesBlock(BaseModel):
     counts: dict[str, int] = Field(default_factory=dict)
     total_tokens: int = 0
+    # Loop 3a Phase 2 — confusion-smoothed counts. IPA-keyed view of `counts`
+    # where every confusion-matrix target has its raw count augmented with
+    # weighted contributions from documented near-miss symbols. Non-target
+    # symbols' smoothed value equals raw. See app/data/confusion_matrix.json
+    # and app/services/smoothing.py for the model.
+    smoothed_counts: dict[str, float] = Field(default_factory=dict)
+    # Loop 3a Phase 2 — per-target audit trail for smoothed_counts. Only
+    # populated for targets where a near-miss contributed or the target had a
+    # non-zero raw count — pure-zero targets are omitted to keep the response lean.
+    confusion_evidence: dict[str, ConfusionEvidenceBlock] = Field(default_factory=dict)
 
 
 class StretchProbeBlock(BaseModel):
@@ -268,6 +292,24 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         phonemes=PhonemesBlock(
             counts=features.phoneme_counts,
             total_tokens=features.phoneme_total_tokens,
+            smoothed_counts=features.phoneme_smoothed_counts,
+            confusion_evidence={
+                target: ConfusionEvidenceBlock(
+                    raw_count=ev.raw_count,
+                    smoothed_count=ev.smoothed_count,
+                    evidence_from=[
+                        ConfusionContributionBlock(
+                            from_symbol=c.from_symbol,
+                            raw_count=c.raw_count,
+                            weight=c.weight,
+                            contribution=c.contribution,
+                        )
+                        for c in ev.evidence_from
+                    ],
+                    interpretation=ev.interpretation,
+                )
+                for target, ev in features.phoneme_confusion_evidence.items()
+            },
         ),
         stretch_phonemes=(
             StretchPhonemesBlock(
